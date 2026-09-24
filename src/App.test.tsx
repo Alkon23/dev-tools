@@ -25,6 +25,20 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'QR code generator' })).toBeInTheDocument();
   });
 
+  it('loads text statistics directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/text-statistics']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Text statistics' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Text statistics' })).toBeInTheDocument();
+  });
+
+  it('loads Text to Unicode directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/text-to-unicode']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Text to Unicode' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Text to Unicode' })).toBeInTheDocument();
+  });
+
   it('renders the not-found page for unknown paths', () => {
     render(<MemoryRouter initialEntries={['/tools/unknown']}><App /></MemoryRouter>);
 
