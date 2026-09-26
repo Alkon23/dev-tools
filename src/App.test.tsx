@@ -39,6 +39,27 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Text to Unicode' })).toBeInTheDocument();
   });
 
+  it('loads the date-time converter directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/date-time-converter']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Date-time converter' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Date-time converter' }, { timeout: 3000 })).toBeInTheDocument();
+  });
+
+  it('loads the color converter directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/color-converter']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Color converter' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Color converter' })).toBeInTheDocument();
+  });
+
+  it('loads the unit converter directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/unit-converter']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Unit converter' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Unit converter' })).toBeInTheDocument();
+  });
+
   it('renders the not-found page for unknown paths', () => {
     render(<MemoryRouter initialEntries={['/tools/unknown']}><App /></MemoryRouter>);
 
