@@ -16,12 +16,14 @@
   "dependencies": {
     "colord": "^2.10.0",
     "date-fns": "^4.4.0",
+    "json5": "^2.2.3",
     "lucide-react": "^0.544.0",
     "monaco-editor": "^0.56.0",
     "qr-code-styling": "^1.9.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "xml-formatter": "^3.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

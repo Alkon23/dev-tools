@@ -60,6 +60,34 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Unit converter' })).toBeInTheDocument();
   });
 
+  it('loads the JSON formatter directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/json-formatter']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'JSON formatter' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'JSON formatter' })).toBeInTheDocument();
+  });
+
+  it('loads the XML formatter directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/xml-formatter']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'XML formatter' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'XML formatter' })).toBeInTheDocument();
+  });
+
+  it('loads the URL encoder directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/url-encoder']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'URL encoder / decoder' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'URL encoder / decoder' })).toBeInTheDocument();
+  });
+
+  it('loads the URL parser directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/url-parser']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'URL parser' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'URL parser' })).toBeInTheDocument();
+  });
+
   it('renders the not-found page for unknown paths', () => {
     render(<MemoryRouter initialEntries={['/tools/unknown']}><App /></MemoryRouter>);
 
