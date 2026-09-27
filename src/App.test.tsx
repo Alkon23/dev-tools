@@ -50,6 +50,13 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Keyboard tester' })).toBeInTheDocument();
   });
 
+  it('loads the ISSN / ISBN validator directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/issn-isbn-validator']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'ISSN / ISBN validator' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'ISSN and ISBN validator' })).toBeInTheDocument();
+  });
+
   it('loads the percentage calculator directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/percentage-calculator']}><App /></MemoryRouter>);
 
