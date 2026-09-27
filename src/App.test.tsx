@@ -43,6 +43,13 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Regex tester' })).toBeInTheDocument();
   });
 
+  it('loads the percentage calculator directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/percentage-calculator']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Percentage calculator' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Percentage calculator' })).toBeInTheDocument();
+  });
+
   it('loads text statistics directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/text-statistics']}><App /></MemoryRouter>);
 
