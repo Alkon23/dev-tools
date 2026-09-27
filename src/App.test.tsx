@@ -1,7 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+
+vi.mock('./tools/regex-tester/Tool.tsx', () => ({
+  default: () => <section aria-label="Regex tester" />,
+}));
 
 describe('App', () => {
   it('renders tools from the registry on the dashboard and sidebar', () => {
@@ -23,6 +27,20 @@ describe('App', () => {
 
     expect(screen.getByRole('heading', { name: 'QR code generator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'QR code generator' })).toBeInTheDocument();
+  });
+
+  it('loads the crontab generator directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/crontab-generator']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Crontab generator' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Crontab generator' })).toBeInTheDocument();
+  });
+
+  it('loads the regex tester directly from its generated route', async () => {
+    render(<MemoryRouter initialEntries={['/tools/regex-tester']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Regex tester' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Regex tester' })).toBeInTheDocument();
   });
 
   it('loads text statistics directly from its generated route', async () => {

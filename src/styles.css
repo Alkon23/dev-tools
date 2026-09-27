@@ -1618,6 +1618,507 @@ textarea[readonly] {
   padding-top: 20px;
 }
 
+.cron-tool {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-inline: auto;
+  max-width: 1040px;
+}
+
+.cron-builder-card,
+.cron-reference-card {
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.cron-expression-field {
+  margin-inline: auto;
+  max-width: 620px;
+  text-align: center;
+}
+
+.cron-expression-field label {
+  color: #45504c;
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.cron-expression-field input {
+  background: #f8faf9;
+  border: 1px solid #d8dfdc;
+  border-radius: 9px;
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(22px, 4vw, 30px);
+  letter-spacing: 0.025em;
+  min-height: 60px;
+  padding: 8px 16px;
+  text-align: center;
+  transition: border-color 130ms ease, box-shadow 130ms ease;
+  width: 100%;
+}
+
+.cron-expression-field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(252, 186, 3, 0.16);
+  outline: 0;
+}
+
+.cron-expression-field input[aria-invalid='true'] {
+  border-color: #b74b42;
+}
+
+.cron-error {
+  color: #a53b32;
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+
+.cron-description {
+  color: #3e4844;
+  font-size: clamp(18px, 2.5vw, 22px);
+  line-height: 1.45;
+  margin: 20px auto 24px;
+  min-height: 32px;
+  text-align: center;
+}
+
+.cron-options {
+  border: 0;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 14px 28px;
+  grid-template-columns: repeat(3, max-content);
+  justify-content: center;
+  margin: 0;
+  padding: 23px 0 0;
+}
+
+.cron-options legend {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  margin: 0 auto 17px;
+  padding-inline: 10px;
+  text-transform: uppercase;
+}
+
+.cron-options label {
+  align-items: center;
+  color: #45504c;
+  cursor: pointer;
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 9px;
+}
+
+.cron-options input {
+  accent-color: var(--accent-dark);
+  height: 17px;
+  margin: 0;
+  width: 17px;
+}
+
+.cron-section-heading {
+  align-items: flex-start;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 17px;
+}
+
+.cron-section-heading h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.cron-section-heading p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cron-diagram {
+  background: var(--sidebar);
+  border-radius: 9px;
+  color: #eaf0ed;
+  font-family: 'DM Mono', monospace;
+  font-size: clamp(11px, 1.8vw, 13px);
+  line-height: 1.7;
+  margin: 0;
+  overflow-x: auto;
+  padding: 20px 22px;
+}
+
+.cron-syntax-heading {
+  margin-top: 30px;
+}
+
+.cron-table-shell {
+  overflow-x: auto;
+}
+
+.cron-helper-table {
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.5;
+  min-width: 780px;
+  width: 100%;
+}
+
+.cron-helper-table th {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  padding: 0 12px 10px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.cron-helper-table td {
+  border-top: 1px solid var(--line);
+  color: #4b5551;
+  padding: 13px 12px;
+  vertical-align: top;
+}
+
+.cron-helper-table td:first-child {
+  min-width: 115px;
+}
+
+.cron-helper-table code {
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.cron-reference-only {
+  background: #f2efe7;
+  border-radius: 999px;
+  color: #746d5d;
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.05em;
+  margin-top: 5px;
+  padding: 3px 6px;
+  text-transform: uppercase;
+  width: max-content;
+}
+
+.regex-tester-tool {
+  align-items: start;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 370px);
+  margin-inline: auto;
+  max-width: 1420px;
+}
+
+.regex-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  width: 100%;
+}
+
+.regex-pattern-card,
+.regex-text-card,
+.regex-cheatsheet {
+  min-width: 0;
+  padding: clamp(22px, 2.5vw, 30px);
+}
+
+.regex-panel-heading {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+}
+
+.regex-panel-heading h2,
+.regex-cheatsheet-heading h2 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 5px 0 0;
+}
+
+.regex-status {
+  background: #eef2ef;
+  border: 1px solid #dce3df;
+  border-radius: 999px;
+  color: #52605a;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  line-height: 1.4;
+  max-width: 52%;
+  padding: 6px 10px;
+  text-align: right;
+}
+
+.regex-status-error,
+.regex-status-timeout {
+  background: #fff1ef;
+  border-color: #efc9c4;
+  color: #963b33;
+}
+
+.regex-expression-shell {
+  align-items: stretch;
+  background: #f8faf9;
+  border: 1px solid #d8dfdc;
+  border-radius: 9px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 58px;
+  overflow: hidden;
+  transition: border-color 130ms ease, box-shadow 130ms ease;
+}
+
+.regex-expression-shell:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(252, 186, 3, 0.16);
+}
+
+.regex-expression-shell > span {
+  align-items: center;
+  color: #87918d;
+  display: flex;
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  padding-inline: 13px 2px;
+}
+
+.regex-expression-shell > .regex-expression-flags {
+  color: var(--accent-dark);
+  padding: 0 14px 0 2px;
+}
+
+.regex-pattern-editor {
+  height: 58px;
+  min-width: 0;
+}
+
+.regex-expression-help {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+.regex-flags {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 22px 0 0;
+  padding: 20px 0 0;
+}
+
+.regex-flags legend {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  padding-right: 10px;
+  text-transform: uppercase;
+}
+
+.regex-flag-list,
+.regex-unicode-modes {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.regex-flag {
+  align-items: center;
+  background: #f8faf9;
+  border: 1px solid #d8dfdc;
+  border-radius: 7px;
+  color: #59645f;
+  cursor: pointer;
+  display: flex;
+  font-size: 11px;
+  gap: 6px;
+  min-height: 38px;
+  padding: 7px 10px;
+}
+
+.regex-flag:has(input:checked) {
+  background: #fff4cf;
+  border-color: #d9b54f;
+  color: #5f4600;
+}
+
+.regex-flag input,
+.regex-unicode-modes input {
+  accent-color: var(--accent-dark);
+  height: 15px;
+  margin: 0;
+  width: 15px;
+}
+
+.regex-flag code,
+.regex-unicode-modes code {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+}
+
+.regex-unicode-modes {
+  border-top: 1px dashed var(--line);
+  margin-top: 13px;
+  padding-top: 13px;
+}
+
+.regex-unicode-modes > span {
+  color: #59645f;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 3px;
+}
+
+.regex-unicode-modes label {
+  align-items: center;
+  color: #59645f;
+  cursor: pointer;
+  display: flex;
+  font-size: 11px;
+  gap: 5px;
+  min-height: 32px;
+  padding-inline: 4px;
+}
+
+.regex-unicode-modes label:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.regex-editor-note {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.regex-text-editor {
+  border: 1px solid #d8dfdc;
+  border-radius: 9px;
+  height: max(390px, 46vh);
+  overflow: hidden;
+}
+
+.regex-text-editor:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(252, 186, 3, 0.16);
+}
+
+.monaco-editor .regex-match-highlight {
+  background: rgba(252, 186, 3, 0.34);
+  border-bottom: 2px solid #9c7100;
+  border-radius: 2px;
+}
+
+.monaco-editor .regex-zero-match {
+  color: #a2392f;
+  font-weight: 700;
+}
+
+.regex-cheatsheet {
+  max-height: calc(100dvh - 92px);
+  overflow-y: auto;
+  position: sticky;
+  scrollbar-color: #c0c8c4 transparent;
+  scrollbar-width: thin;
+  top: 84px;
+}
+
+.regex-cheatsheet-heading {
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+  padding-bottom: 17px;
+}
+
+.regex-cheatsheet-heading p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 7px 0 0;
+}
+
+.regex-cheat-section + .regex-cheat-section {
+  margin-top: 23px;
+}
+
+.regex-cheat-section h3 {
+  color: #45504c;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.regex-cheat-table {
+  border-collapse: collapse;
+  font-size: 10px;
+  line-height: 1.45;
+  width: 100%;
+}
+
+.regex-cheat-table th {
+  color: var(--muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 0 7px 6px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.regex-cheat-table td {
+  border-top: 1px solid #ece9e1;
+  color: #59645f;
+  padding: 7px;
+  vertical-align: top;
+}
+
+.regex-cheat-table td:first-child {
+  width: 34%;
+}
+
+.regex-cheat-table code {
+  color: #5f4300;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.regex-mdn-link {
+  border-top: 1px solid var(--line);
+  color: var(--accent-dark);
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 24px;
+  padding-top: 16px;
+  text-decoration: underline;
+  text-decoration-color: #d9b54f;
+  text-underline-offset: 3px;
+}
+
 .url-encoder-tool {
   display: grid;
   gap: 18px;
@@ -1857,6 +2358,17 @@ textarea[readonly] {
   text-align: center;
 }
 
+@media (max-width: 1100px) {
+  .regex-tester-tool {
+    grid-template-columns: 1fr;
+  }
+
+  .regex-cheatsheet {
+    max-height: none;
+    position: static;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell,
   .app-shell.has-collapsed-sidebar {
@@ -1968,6 +2480,86 @@ textarea[readonly] {
   .url-encoder-tool,
   .url-parts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cron-options {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .cron-table-shell {
+    overflow: visible;
+  }
+
+  .cron-helper-table {
+    min-width: 0;
+  }
+
+  .cron-helper-table thead {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .cron-helper-table,
+  .cron-helper-table tbody,
+  .cron-helper-table tr,
+  .cron-helper-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .cron-helper-table tbody {
+    display: grid;
+    gap: 12px;
+  }
+
+  .cron-helper-table tr {
+    background: #fafbf9;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .cron-helper-table td {
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 118px minmax(0, 1fr);
+    padding: 10px 12px;
+  }
+
+  .cron-helper-table td:first-child {
+    border-top: 0;
+  }
+
+  .cron-helper-table td::before {
+    color: var(--muted);
+    content: attr(data-label);
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.07em;
+    padding-top: 2px;
+    text-transform: uppercase;
+  }
+
+  .regex-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .regex-status {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .regex-text-editor {
+    height: max(320px, 48vh);
   }
 
   .data-formatter-editor textarea {
@@ -2097,6 +2689,54 @@ textarea[readonly] {
 
   .data-formatter-options {
     justify-content: space-between;
+  }
+
+  .cron-builder-card,
+  .cron-reference-card {
+    padding-inline: 18px;
+  }
+
+  .cron-expression-field input {
+    font-size: 20px;
+  }
+
+  .cron-diagram {
+    padding-inline: 16px;
+  }
+
+  .cron-helper-table td {
+    grid-template-columns: 96px minmax(0, 1fr);
+  }
+
+  .regex-pattern-card,
+  .regex-text-card,
+  .regex-cheatsheet {
+    padding-inline: 18px;
+  }
+
+  .regex-expression-shell > span {
+    font-size: 17px;
+    padding-left: 10px;
+  }
+
+  .regex-expression-shell > .regex-expression-flags {
+    padding-right: 10px;
+  }
+
+  .regex-flag {
+    min-height: 42px;
+  }
+}
+
+@media (forced-colors: active) {
+  .monaco-editor .regex-match-highlight {
+    background: Highlight;
+    border: 1px solid HighlightText;
+    color: HighlightText !important;
+  }
+
+  .monaco-editor .regex-zero-match {
+    color: Highlight !important;
   }
 }
 
