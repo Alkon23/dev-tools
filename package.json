@@ -21,6 +21,8 @@
     "json5": "^2.2.3",
     "lucide-react": "^0.544.0",
     "monaco-editor": "^0.56.0",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "4.8.69",
     "qr-code-styling": "^1.9.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
