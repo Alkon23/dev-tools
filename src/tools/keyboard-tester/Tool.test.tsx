@@ -98,8 +98,10 @@ describe('KeyboardTesterTool', () => {
     fireEvent.keyDown(document, { code: 'KeyF', key: 'f' });
     expect(key).toHaveClass('is-failed', 'is-held', 'is-tested');
     expect(key).toHaveAccessibleName('F key, pressed');
+    expect(key.querySelector('i')).not.toBeInTheDocument();
     fireEvent.keyUp(document, { code: 'KeyF', key: 'f' });
     expect(key).toHaveAccessibleName('F key, failed');
+    expect(key.querySelector('i')).toHaveTextContent('!');
 
     fireEvent.contextMenu(key);
     expect(key).not.toHaveClass('is-failed');

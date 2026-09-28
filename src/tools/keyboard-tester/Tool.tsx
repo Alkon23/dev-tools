@@ -221,7 +221,7 @@ export default function KeyboardTesterTool() {
                 >
                   {keyboardKey.secondaryLabel && <small>{keyboardKey.secondaryLabel}</small>}
                   <span>{keyboardKey.label}</span>
-                  {failed && <i aria-hidden="true">!</i>}
+                  {failed && !held && <i aria-hidden="true">!</i>}
                 </kbd>
               );
             })}
