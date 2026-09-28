@@ -125,13 +125,13 @@ const ADVANCED_TOKEN_GROUPS: readonly TokenGroup[] = [
 
 function TokenGroups({ groups, onAdd }: { groups: readonly TokenGroup[]; onAdd: (token: string) => void }) {
   return groups.map((group) => (
-    <div className="date-token-group" key={group.label}>
-      <h3>{group.label}</h3>
-      <div className="date-token-list">
+    <div key={group.label}>
+      <h3 className="mb-[9px] text-[11px] font-semibold text-[#45504c]">{group.label}</h3>
+      <div className="flex flex-wrap gap-[7px]">
         {group.tokens.map((token) => (
           <button
             aria-label={`Add ${token.label} (${token.display ?? token.value})`}
-            className="date-token"
+            className="inline-flex min-h-[47px] cursor-pointer flex-col items-start gap-0.5 rounded-[7px] border border-[#d8dfdc] bg-[#f8faf9] px-2.5 py-[7px] text-left text-ink hover:border-[#d8bd67] hover:bg-[#fff6d9] focus-visible:shadow-[0_0_0_3px_rgba(252,186,3,0.2)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent-dark [&_code]:font-mono [&_code]:text-[11px] [&_code]:font-medium [&_code]:text-accent-dark [&_span]:text-[9px] [&_span]:whitespace-nowrap [&_span]:text-muted"
             key={`${group.label}-${token.value}`}
             onClick={() => onAdd(token.value)}
             title={token.label}
@@ -193,12 +193,13 @@ export default function DateTimeConverterTool() {
   }
 
   return (
-    <section className="date-converter-tool" aria-label="Date-time converter">
-      <div className="date-input-shell">
-        <div className="date-input-grid">
+    <section className="mx-auto max-w-[1320px]" aria-label="Date-time converter">
+      <div className="mx-auto mb-[clamp(22px,3vw,34px)] max-w-[760px]">
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(230px,0.72fr)] items-end gap-3 max-[420px]:grid-cols-1">
           <div className="field-group">
             <label htmlFor="date-converter-input">Date or timestamp</label>
             <input
+              className="input-control"
               aria-describedby={hasInvalidInput ? 'date-input-error' : undefined}
               aria-invalid={hasInvalidInput}
               autoFocus
@@ -209,9 +210,10 @@ export default function DateTimeConverterTool() {
               value={inputDate}
             />
           </div>
-          <div className="field-group date-format-select">
+          <div className="field-group">
             <label htmlFor="date-input-format">Input format</label>
             <select
+              className="select-control"
               id="date-input-format"
               onChange={(event) => setInputFormat(event.target.value as DateFormatId)}
               value={inputFormat}
@@ -222,28 +224,29 @@ export default function DateTimeConverterTool() {
             </select>
           </div>
         </div>
-        {hasInvalidInput && <p className="date-input-error" id="date-input-error">This date is invalid for the selected input format.</p>}
+        {hasInvalidInput && <p className="error-text mt-2 text-xs" id="date-input-error">This date is invalid for the selected input format.</p>}
       </div>
 
-      <div className="date-converter-columns">
-        <div className="tool-card date-converter-panel">
-          <div className="date-panel-heading">
+      <div className="grid grid-cols-2 items-start gap-[18px] max-[760px]:grid-cols-1">
+        <div className="tool-card min-w-0 p-[clamp(22px,2.5vw,30px)]">
+          <div className="mb-[22px] flex items-start gap-[13px] border-b border-line pb-[17px]">
             <span className="section-index">01</span>
             <div>
-              <h2>Predefined formats</h2>
-              <p>Standard representations of the selected instant.</p>
+              <h2 className="mt-0 mb-1 text-[17px] font-semibold">Predefined formats</h2>
+              <p className="m-0 text-xs leading-[1.5] text-muted">Standard representations of the selected instant.</p>
             </div>
           </div>
 
-          <div className="date-results" aria-live="polite">
+          <div className="flex flex-col gap-[17px]" aria-live="polite">
             {DATE_FORMATS.map((dateFormat) => {
               const value = predefinedResults.find(({ id }) => id === dateFormat.id)?.value ?? '';
               return (
-                <div className="date-result" key={dateFormat.id}>
-                  <label htmlFor={`date-result-${dateFormat.id}`}>{dateFormat.label}</label>
-                  <div className="date-copy-field">
-                    <input id={`date-result-${dateFormat.id}`} readOnly value={value} placeholder="Invalid date" />
+                <div className="flex min-w-0 flex-col gap-[7px]" key={dateFormat.id}>
+                  <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`date-result-${dateFormat.id}`}>{dateFormat.label}</label>
+                  <div className="grid grid-cols-[minmax(0,1fr)_42px]">
+                    <input className="input-control rounded-r-none font-mono text-xs" id={`date-result-${dateFormat.id}`} readOnly value={value} placeholder="Invalid date" />
                     <button
+                      className="copy-button"
                       aria-label={`Copy ${dateFormat.label}`}
                       disabled={!value}
                       onClick={() => copyValue(value, dateFormat.id)}
@@ -259,25 +262,26 @@ export default function DateTimeConverterTool() {
           </div>
         </div>
 
-        <div className="tool-card date-converter-panel date-builder-panel">
-          <div className="date-panel-heading">
+        <div className="tool-card min-w-0 p-[clamp(22px,2.5vw,30px)]">
+          <div className="mb-[22px] flex items-start gap-[13px] border-b border-line pb-[17px]">
             <span className="section-index">02</span>
             <div>
-              <h2>Custom format builder</h2>
-              <p>Build a pattern by adding tokens in order.</p>
+              <h2 className="mt-0 mb-1 text-[17px] font-semibold">Custom format builder</h2>
+              <p className="m-0 text-xs leading-[1.5] text-muted">Build a pattern by adding tokens in order.</p>
             </div>
           </div>
 
-          <div className="date-builder-preview">
-            <div>
-              <span>Format string</span>
-              <code aria-label="Custom format string">{customPattern || 'No tokens selected'}</code>
+          <div className="flex flex-col gap-[17px] rounded-[9px] border border-[#d8dfdc] bg-[#f8faf9] p-4">
+            <div className="flex flex-col gap-[7px]">
+              <span className="text-[11px] font-semibold text-[#45504c]">Format string</span>
+              <code className="block min-h-[39px] [overflow-wrap:anywhere] rounded-md bg-[#272a28] px-3 py-[11px] text-xs text-[#f7d978]" aria-label="Custom format string">{customPattern || 'No tokens selected'}</code>
             </div>
-            <div className="date-result">
-              <label htmlFor="custom-date-result">Custom result</label>
-              <div className="date-copy-field">
-                <input id="custom-date-result" readOnly value={customResult} placeholder="Add tokens to build a format" />
+            <div className="flex min-w-0 flex-col gap-[7px]">
+              <label className="text-[11px] font-semibold text-[#45504c]" htmlFor="custom-date-result">Custom result</label>
+              <div className="grid grid-cols-[minmax(0,1fr)_42px]">
+                <input className="input-control rounded-r-none font-mono text-xs" id="custom-date-result" readOnly value={customResult} placeholder="Add tokens to build a format" />
                 <button
+                  className="copy-button"
                   aria-label="Copy custom result"
                   disabled={!customResult}
                   onClick={() => copyValue(customResult, 'custom')}
@@ -290,7 +294,7 @@ export default function DateTimeConverterTool() {
             </div>
           </div>
 
-          <div className="date-builder-actions" aria-label="Format builder actions">
+          <div className="my-[14px] mb-6 flex flex-wrap gap-2 [&_.button]:min-h-9 [&_.button]:px-[11px] [&_.button]:py-[7px]" aria-label="Format builder actions">
             <button className="button button-secondary" disabled={!customTokens.length} onClick={() => setCustomTokens((tokens) => tokens.slice(0, -1))} type="button">
               <Undo2 size={15} aria-hidden="true" /> Undo
             </button>
@@ -302,13 +306,13 @@ export default function DateTimeConverterTool() {
             </button>
           </div>
 
-          <div className="date-token-groups">
+          <div className="flex flex-col gap-[22px]">
             <TokenGroups groups={COMMON_TOKEN_GROUPS} onAdd={(token) => setCustomTokens((tokens) => [...tokens, token])} />
           </div>
 
-          <details className="date-advanced-tokens">
-            <summary>Advanced tokens</summary>
-            <div className="date-token-groups">
+          <details className="mt-[25px] border-t border-line pt-[18px]">
+            <summary className="mb-5 cursor-pointer text-xs font-semibold text-[#45504c]">Advanced tokens</summary>
+            <div className="flex flex-col gap-[22px]">
               <TokenGroups groups={ADVANCED_TOKEN_GROUPS} onAdd={(token) => setCustomTokens((tokens) => [...tokens, token])} />
             </div>
           </details>

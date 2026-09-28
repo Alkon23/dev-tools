@@ -1,6 +1,6 @@
 # Dev Tools Agent Guide
 
-Work on the React application at the workspace root. Treat `reference/` as read-only unless the user explicitly requests changes to the Vue reference project.
+Work on the React application at the workspace root. Treat `reference/` and `pdfcraft` as read-only unless the user explicitly requests changes to the Vue reference project.
 
 ## Project Structure
 

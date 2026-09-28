@@ -45,17 +45,17 @@ function UnitSection({ copiedUnit, definition, index, onCopy }: UnitSectionProps
   }
 
   return (
-    <section className={`tool-card unit-converter-section unit-converter-${definition.id}`} aria-labelledby={`unit-section-${definition.id}`}>
-      <div className="unit-section-heading">
-        <div className="unit-section-icon"><Icon size={21} aria-hidden /></div>
-        <div>
+    <section className="tool-card p-[clamp(22px,3vw,32px)]" aria-labelledby={`unit-section-${definition.id}`}>
+      <div className="mb-[22px] flex items-start gap-3.5 border-b border-line pb-[18px]">
+        <div className="flex size-[42px] shrink-0 items-center justify-center rounded-lg bg-[#fff3c9] text-accent-dark"><Icon size={21} aria-hidden /></div>
+        <div className="min-w-0">
           <span className="section-index">{String(index + 1).padStart(2, '0')}</span>
-          <h2 id={`unit-section-${definition.id}`}>{definition.title}</h2>
-          <p>{definition.description}</p>
+          <h2 className="ml-[9px] inline text-lg font-semibold" id={`unit-section-${definition.id}`}>{definition.title}</h2>
+          <p className="mt-1.5 mb-0 text-xs leading-[1.5] text-muted">{definition.description}</p>
         </div>
       </div>
 
-      <div className="unit-fields" aria-live="polite">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(205px,1fr))] gap-[17px] max-[760px]:grid-cols-1" aria-live="polite">
         {definition.units.map((unit, unitIndex) => {
           const rawValue = values[unit.id];
           const invalid = rawValue.trim() !== '' && parseUnitValue(rawValue) === undefined;
@@ -63,10 +63,11 @@ function UnitSection({ copiedUnit, definition, index, onCopy }: UnitSectionProps
           const label = `${unit.label} (${unit.symbol})`;
 
           return (
-            <div className="unit-field" key={unit.id}>
-              <label htmlFor={`unit-${definition.id}-${unit.id}`}>{label}</label>
-              <div className="unit-input-group">
+            <div className="flex min-w-0 flex-col gap-[7px]" key={unit.id}>
+              <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`unit-${definition.id}-${unit.id}`}>{label}</label>
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_42px]">
                 <input
+                  className="input-control rounded-r-none font-mono text-xs focus:relative focus:z-1"
                   aria-describedby={invalid ? errorId : undefined}
                   aria-invalid={invalid}
                   autoFocus={index === 0 && unitIndex === 0}
@@ -78,8 +79,9 @@ function UnitSection({ copiedUnit, definition, index, onCopy }: UnitSectionProps
                   type="text"
                   value={rawValue}
                 />
-                <span className="unit-symbol" aria-hidden="true">{unit.symbol}</span>
+                <span className="flex min-w-[38px] items-center justify-center border-y border-[#d8dfdc] bg-[#eef1ef] px-2 font-mono text-[10px] text-[#65706c]" aria-hidden="true">{unit.symbol}</span>
                 <button
+                  className="copy-button border-l"
                   aria-label={`Copy ${label}`}
                   disabled={!rawValue || invalid}
                   onClick={() => onCopy(unit.id, rawValue)}
@@ -89,7 +91,7 @@ function UnitSection({ copiedUnit, definition, index, onCopy }: UnitSectionProps
                   {copiedUnit === unit.id ? <Check size={16} aria-hidden="true" /> : <Clipboard size={16} aria-hidden="true" />}
                 </button>
               </div>
-              {invalid && <p className="unit-field-error" id={errorId}>Enter a valid number.</p>}
+              {invalid && <p className="error-text" id={errorId}>Enter a valid number.</p>}
             </div>
           );
         })}
@@ -118,7 +120,7 @@ export default function UnitConverterTool() {
   }
 
   return (
-    <div className="unit-converter-tool" aria-label="Unit converter" role="region">
+    <div className="mx-auto flex max-w-[1040px] flex-col gap-[18px]" aria-label="Unit converter" role="region">
       {UNIT_SECTIONS.map((definition, index) => (
         <UnitSection
           copiedUnit={copiedUnit}

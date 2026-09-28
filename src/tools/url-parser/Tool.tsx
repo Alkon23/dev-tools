@@ -110,15 +110,15 @@ export default function UrlParserTool() {
   }
 
   return (
-    <section className="url-parser-tool" aria-label="URL parser">
-      <div className="tool-card url-source-card">
-        <div className="url-section-heading">
-          <div>
+    <section className="mx-auto flex max-w-[1180px] flex-col gap-[18px]" aria-label="URL parser">
+      <div className="tool-card p-[clamp(22px,3vw,32px)]">
+        <div className="mb-[22px] flex items-center justify-between border-b border-line pb-[18px] max-[420px]:items-start max-[420px]:flex-col max-[420px]:gap-3">
+          <div className="flex items-baseline gap-2.5">
             <span className="section-index">SOURCE</span>
-            <h2>URL workspace</h2>
+            <h2 className="m-0 text-lg font-semibold">URL workspace</h2>
           </div>
           <button
-            className="button button-secondary"
+            className="button button-secondary max-[420px]:w-full"
             disabled={!parsedUrl}
             onClick={() => copyValue('source', parsedUrl?.href ?? '')}
             type="button"
@@ -127,8 +127,9 @@ export default function UrlParserTool() {
             {copiedValue === 'source' ? 'Copied' : 'Copy URL'}
           </button>
         </div>
-        <label htmlFor="url-parser-source">URL to parse and edit</label>
+        <label className="mb-[7px] block text-[11px] font-semibold text-[#45504c]" htmlFor="url-parser-source">URL to parse and edit</label>
         <textarea
+          className="font-mono text-xs aria-invalid:border-[#b74b42]"
           aria-describedby={!parsedUrl ? 'url-parser-source-error' : undefined}
           aria-invalid={!parsedUrl}
           autoCapitalize="off"
@@ -141,27 +142,28 @@ export default function UrlParserTool() {
           spellCheck={false}
           value={urlValue}
         />
-        {!parsedUrl && <p className="url-field-error" id="url-parser-source-error">Enter a valid absolute URL.</p>}
+        {!parsedUrl && <p className="error-text" id="url-parser-source-error">Enter a valid absolute URL.</p>}
       </div>
 
-      <div className="tool-card url-parts-card">
-        <div className="url-section-heading">
-          <div>
+      <div className="tool-card p-[clamp(22px,3vw,32px)]">
+        <div className="mb-[22px] flex items-center justify-between border-b border-line pb-[18px] max-[420px]:items-start max-[420px]:flex-col max-[420px]:gap-3">
+          <div className="flex items-baseline gap-2.5">
             <span className="section-index">PARTS</span>
-            <h2>Components</h2>
+            <h2 className="m-0 text-lg font-semibold">Components</h2>
           </div>
-          <p>Edit any field to rebuild the source URL.</p>
+          <p className="m-0 text-xs leading-[1.5] text-muted">Edit any field to rebuild the source URL.</p>
         </div>
 
-        <div className="url-parts-grid">
+        <div className="grid grid-cols-2 gap-[17px] max-[760px]:grid-cols-1">
           {PARTS.map(({ key, label, removable }) => {
             const value = parsedUrl ? partDrafts[key] : EMPTY_PARTS[key];
             const errorId = `url-part-${key}-error`;
             return (
-              <div className="url-part-field" key={key}>
-                <label htmlFor={`url-part-${key}`}>{label}</label>
-                <div className={`url-part-input-group${removable ? ' has-remove' : ''}`}>
+              <div className="min-w-0" key={key}>
+                <label className="mb-[7px] block text-[11px] font-semibold text-[#45504c]" htmlFor={`url-part-${key}`}>{label}</label>
+                <div className={`grid ${removable ? 'grid-cols-[minmax(0,1fr)_42px_42px]' : 'grid-cols-[minmax(0,1fr)_42px]'}`}>
                   <input
+                    className="input-control rounded-r-none font-mono text-xs focus:relative focus:z-1"
                     aria-describedby={invalidPart === key ? errorId : undefined}
                     aria-invalid={invalidPart === key}
                     disabled={!parsedUrl}
@@ -178,6 +180,7 @@ export default function UrlParserTool() {
                     value={value}
                   />
                   <button
+                    className="copy-button rounded-none"
                     aria-label={`Copy ${label}`}
                     disabled={!value}
                     onClick={() => copyValue(key, value)}
@@ -188,6 +191,7 @@ export default function UrlParserTool() {
                   </button>
                   {removable && (
                     <button
+                      className="copy-button"
                       aria-label={`Remove ${label}`}
                       disabled={!value}
                       onClick={() => removePart(key)}
@@ -198,21 +202,21 @@ export default function UrlParserTool() {
                     </button>
                   )}
                 </div>
-                {invalidPart === key && <p className="url-field-error" id={errorId}>This value cannot be applied to the URL.</p>}
+                {invalidPart === key && <p className="error-text mt-1.5" id={errorId}>This value cannot be applied to the URL.</p>}
               </div>
             );
           })}
         </div>
       </div>
 
-      <div className="tool-card url-query-card">
-        <div className="url-section-heading">
-          <div>
+      <div className="tool-card p-[clamp(22px,3vw,32px)]">
+        <div className="mb-[22px] flex items-center justify-between border-b border-line pb-[18px] max-[420px]:items-start max-[420px]:flex-col max-[420px]:gap-3">
+          <div className="flex items-baseline gap-2.5">
             <span className="section-index">QUERY</span>
-            <h2>Parameters</h2>
+            <h2 className="m-0 text-lg font-semibold">Parameters</h2>
           </div>
           <button
-            className="button button-secondary"
+            className="button button-secondary max-[420px]:w-full"
             disabled={!parsedUrl}
             onClick={() => applyUrl(addQueryEntry(urlValue))}
             type="button"
@@ -223,15 +227,16 @@ export default function UrlParserTool() {
         </div>
 
         {queryEntries.length === 0 ? (
-          <p className="url-query-empty">This URL has no query parameters.</p>
+          <p className="m-0 rounded-lg border border-dashed border-[#ccd4d0] bg-[#f8faf9] p-5 text-center text-xs leading-[1.5] text-muted">This URL has no query parameters.</p>
         ) : (
-          <div className="url-query-list">
+          <div className="flex flex-col gap-2.5">
             {queryEntries.map(([key, value], index) => (
-              <div className="url-query-row" key={index}>
-                <div className="url-query-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
-                <div className="url-query-field">
-                  <label htmlFor={`url-query-key-${index}`}>Parameter {index + 1} name</label>
+              <div className="grid grid-cols-[42px_minmax(0,1fr)_minmax(0,1fr)_42px] items-end max-[760px]:grid-cols-[36px_minmax(0,1fr)_42px] max-[760px]:items-stretch" key={index}>
+                <div className="flex h-11 items-center justify-center self-end rounded-l-[7px] border border-[#d8dfdc] bg-[#eef1ef] font-mono text-[10px] text-muted max-[760px]:row-span-2 max-[760px]:h-auto max-[760px]:self-stretch" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
+                <div className="min-w-0 max-[760px]:col-start-2">
+                  <label className="mb-[7px] block text-[11px] font-semibold text-[#45504c]" htmlFor={`url-query-key-${index}`}>Parameter {index + 1} name</label>
                   <input
+                    className="input-control rounded-none border-l-0 font-mono text-xs max-[760px]:rounded-tr-[7px] max-[760px]:border-l"
                     id={`url-query-key-${index}`}
                     onChange={(event) => changeQueryEntry(index, event.target.value, value)}
                     spellCheck={false}
@@ -239,9 +244,10 @@ export default function UrlParserTool() {
                     value={key}
                   />
                 </div>
-                <div className="url-query-field">
-                  <label htmlFor={`url-query-value-${index}`}>Parameter {index + 1} value</label>
+                <div className="min-w-0 max-[760px]:col-start-2">
+                  <label className="mb-[7px] block text-[11px] font-semibold text-[#45504c] max-[760px]:sr-only" htmlFor={`url-query-value-${index}`}>Parameter {index + 1} value</label>
                   <input
+                    className="input-control rounded-none border-l-0 font-mono text-xs max-[760px]:rounded-br-[7px] max-[760px]:border-t-0 max-[760px]:border-l"
                     id={`url-query-value-${index}`}
                     onChange={(event) => changeQueryEntry(index, key, event.target.value)}
                     spellCheck={false}
@@ -251,7 +257,7 @@ export default function UrlParserTool() {
                 </div>
                 <button
                   aria-label={`Remove parameter ${index + 1}`}
-                  className="url-query-remove"
+                  className="copy-button h-11 self-end max-[760px]:col-start-3 max-[760px]:row-span-2 max-[760px]:row-start-1 max-[760px]:ml-[7px] max-[760px]:h-full max-[760px]:rounded-[7px] max-[760px]:border-l"
                   onClick={() => applyUrl(removeQueryEntry(urlValue, index))}
                   title={`Remove parameter ${index + 1}`}
                   type="button"

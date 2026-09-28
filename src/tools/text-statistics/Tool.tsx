@@ -12,11 +12,11 @@ export default function TextStatisticsTool() {
   ];
 
   return (
-    <section className="tool-card text-statistics-tool" aria-label="Text statistics">
+    <section className="tool-card mx-auto max-w-[900px]" aria-label="Text statistics">
       <div className="field-group">
         <label htmlFor="statistics-text">Your text</label>
         <textarea
-          className="text-statistics-input"
+          className="min-h-[220px]"
           id="statistics-text"
           onChange={(event) => setText(event.target.value)}
           placeholder="Your text..."
@@ -25,11 +25,11 @@ export default function TextStatisticsTool() {
         />
       </div>
 
-      <div className="statistics-grid" aria-live="polite">
+      <div className="mt-6 grid grid-cols-4 gap-3 max-[760px]:grid-cols-2 max-[420px]:grid-cols-1" aria-live="polite">
         {metrics.map((metric) => (
-          <div className="statistic" key={metric.label} role="group" aria-label={metric.label}>
-            <span>{metric.label}</span>
-            <strong>{metric.value}</strong>
+          <div className="flex min-w-0 flex-col gap-2 rounded-lg border border-[#d8dfdc] bg-[#f8faf9] p-4" key={metric.label} role="group" aria-label={metric.label}>
+            <span className="text-[11px] font-semibold text-muted">{metric.label}</span>
+            <strong className="[overflow-wrap:anywhere] font-mono text-[clamp(20px,2.4vw,28px)] font-medium text-ink">{metric.value}</strong>
           </div>
         ))}
       </div>

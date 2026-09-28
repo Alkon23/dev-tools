@@ -183,16 +183,16 @@ export default function RegexTesterTool() {
   }
 
   return (
-    <section className="regex-tester-tool" aria-label="Regex tester">
-      <div className="regex-workspace">
-        <div className="tool-card regex-pattern-card">
-          <div className="regex-panel-heading">
+    <section className="mx-auto grid max-w-[1420px] grid-cols-[minmax(0,1fr)_minmax(320px,370px)] items-start gap-[18px] max-[1100px]:grid-cols-1 [&_.regex-match-highlight]:rounded-sm [&_.regex-match-highlight]:border-b-2 [&_.regex-match-highlight]:border-[#9c7100] [&_.regex-match-highlight]:bg-[rgba(252,186,3,0.34)] [&_.regex-zero-match]:font-bold [&_.regex-zero-match]:text-[#a2392f] forced-colors:[&_.regex-match-highlight]:border forced-colors:[&_.regex-match-highlight]:border-[HighlightText] forced-colors:[&_.regex-match-highlight]:bg-[Highlight] forced-colors:[&_.regex-match-highlight]:text-[HighlightText]! forced-colors:[&_.regex-zero-match]:text-[Highlight]!" aria-label="Regex tester">
+      <div className="flex min-w-0 w-full flex-col gap-[18px]">
+        <div className="tool-card min-w-0 p-[clamp(22px,2.5vw,30px)] max-[420px]:px-[18px]">
+          <div className="mb-5 flex items-center justify-between gap-[18px] border-b border-line pb-4 max-[760px]:items-start max-[760px]:flex-col max-[760px]:gap-2.5">
             <div>
               <span className="section-index">EXPRESSION</span>
-              <h2>JavaScript pattern</h2>
+              <h2 className="mt-1 mb-0 text-[17px] font-semibold">JavaScript pattern</h2>
             </div>
             <output
-              className={`regex-status regex-status-${result.status}`}
+              className={`max-w-[52%] rounded-full border px-2.5 py-1.5 text-right font-mono text-[9px] leading-[1.4] max-[760px]:max-w-full max-[760px]:text-left ${result.status === 'error' || result.status === 'timeout' ? 'border-[#efc9c4] bg-[#fff1ef] text-[#963b33]' : 'border-[#dce3df] bg-[#eef2ef] text-[#52605a]'}`}
               aria-live="polite"
               htmlFor="regex-pattern-editor regex-text-editor"
             >
@@ -200,34 +200,36 @@ export default function RegexTesterTool() {
             </output>
           </div>
 
-          <div className="regex-expression-shell" aria-describedby="regex-expression-help">
-            <span aria-hidden="true">/</span>
-            <div className="regex-pattern-editor" id="regex-pattern-editor" ref={patternContainerRef} />
-            <span className="regex-expression-flags" aria-hidden="true">/{activeFlags}</span>
+          <div className="grid min-h-[58px] grid-cols-[auto_minmax(0,1fr)_auto] items-stretch overflow-hidden rounded-[9px] border border-[#d8dfdc] bg-[#f8faf9] transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-focus" aria-describedby="regex-expression-help">
+            <span className="flex items-center py-0 pr-0.5 pl-[13px] font-mono text-xl text-[#87918d] max-[420px]:pl-2.5 max-[420px]:text-[17px]" aria-hidden="true">/</span>
+            <div className="h-[58px] min-w-0" id="regex-pattern-editor" ref={patternContainerRef} />
+            <span className="flex items-center py-0 pr-3.5 pl-0.5 font-mono text-xl text-accent-dark max-[420px]:pr-2.5 max-[420px]:text-[17px]" aria-hidden="true">/{activeFlags}</span>
           </div>
-          <p className="regex-expression-help" id="regex-expression-help">
+          <p className="mt-2 mb-0 text-[11px] leading-[1.5] text-muted" id="regex-expression-help">
             Enter the pattern without surrounding slashes. Colors distinguish regex syntax.
           </p>
 
-          <fieldset className="regex-flags">
-            <legend>Flags</legend>
-            <div className="regex-flag-list">
+          <fieldset className="mt-[22px] border-0 border-t border-line pt-5">
+            <legend className="pr-2.5 font-mono text-[9px] tracking-[0.09em] text-muted uppercase">Flags</legend>
+            <div className="flex flex-wrap items-center gap-2">
               {FLAG_OPTIONS.map((option) => (
-                <label className="regex-flag" key={option.flag} title={option.title}>
+                <label className="flex min-h-[38px] cursor-pointer items-center gap-1.5 rounded-[7px] border border-[#d8dfdc] bg-[#f8faf9] px-2.5 py-[7px] text-[11px] text-[#59645f] has-checked:border-[#d9b54f] has-checked:bg-[#fff4cf] has-checked:text-[#5f4600] max-[420px]:min-h-[42px]" key={option.flag} title={option.title}>
                   <input
+                    className="m-0 size-[15px] accent-accent-dark"
                     checked={flags[option.key]}
                     onChange={(event) => setBooleanFlag(option.key, event.target.checked)}
                     type="checkbox"
                   />
-                  <code>{option.flag}</code>
+                  <code className="font-mono font-medium">{option.flag}</code>
                   <span>{option.label}</span>
                 </label>
               ))}
             </div>
-            <div className="regex-unicode-modes" role="group" aria-label="Unicode mode">
-              <span>Unicode</span>
-              <label>
+            <div className="mt-[13px] flex flex-wrap items-center gap-2 border-t border-dashed border-line pt-[13px]" role="group" aria-label="Unicode mode">
+              <span className="mr-1 text-[11px] font-semibold text-[#59645f]">Unicode</span>
+              <label className="flex min-h-8 cursor-pointer items-center gap-1.5 px-1 text-[11px] text-[#59645f]">
                 <input
+                  className="m-0 size-[15px] accent-accent-dark"
                   checked={flags.unicodeMode === ''}
                   name="regex-unicode-mode"
                   onChange={() => setFlags((current) => ({ ...current, unicodeMode: '' }))}
@@ -235,38 +237,40 @@ export default function RegexTesterTool() {
                 />
                 Off
               </label>
-              <label>
+              <label className="flex min-h-8 cursor-pointer items-center gap-1.5 px-1 text-[11px] text-[#59645f]">
                 <input
+                  className="m-0 size-[15px] accent-accent-dark"
                   checked={flags.unicodeMode === 'u'}
                   name="regex-unicode-mode"
                   onChange={() => setFlags((current) => ({ ...current, unicodeMode: 'u' }))}
                   type="radio"
                 />
-                <code>u</code>
+                <code className="font-mono font-medium">u</code>
               </label>
-              <label title={unicodeSetsSupported ? 'Unicode sets mode' : 'Unicode sets are not supported by this browser'}>
+              <label className="flex min-h-8 cursor-pointer items-center gap-1.5 px-1 text-[11px] text-[#59645f] has-disabled:cursor-not-allowed has-disabled:opacity-45" title={unicodeSetsSupported ? 'Unicode sets mode' : 'Unicode sets are not supported by this browser'}>
                 <input
+                  className="m-0 size-[15px] accent-accent-dark"
                   checked={flags.unicodeMode === 'v'}
                   disabled={!unicodeSetsSupported}
                   name="regex-unicode-mode"
                   onChange={() => setFlags((current) => ({ ...current, unicodeMode: 'v' }))}
                   type="radio"
                 />
-                <code>v</code>
+                <code className="font-mono font-medium">v</code>
               </label>
             </div>
           </fieldset>
         </div>
 
-        <div className="tool-card regex-text-card">
-          <div className="regex-panel-heading">
+        <div className="tool-card min-w-0 p-[clamp(22px,2.5vw,30px)] max-[420px]:px-[18px]">
+          <div className="mb-5 flex items-center justify-between gap-[18px] border-b border-line pb-4 max-[760px]:items-start max-[760px]:flex-col max-[760px]:gap-2.5">
             <div>
               <span className="section-index">TEST TEXT</span>
-              <h2>Highlighted matches</h2>
+              <h2 className="mt-1 mb-0 text-[17px] font-semibold">Highlighted matches</h2>
             </div>
-            <span className="regex-editor-note">Editable</span>
+            <span className="font-mono text-[9px] tracking-[0.07em] text-muted uppercase">Editable</span>
           </div>
-          <div className="regex-text-editor" id="regex-text-editor" ref={textContainerRef} />
+          <div className="h-[max(390px,46vh)] overflow-hidden rounded-[9px] border border-[#d8dfdc] focus-within:border-accent focus-within:shadow-focus max-[760px]:h-[max(320px,48vh)]" id="regex-text-editor" ref={textContainerRef} />
         </div>
       </div>
 

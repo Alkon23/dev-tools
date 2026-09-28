@@ -90,18 +90,18 @@ const FLAGS: readonly CheatRow[] = [
 
 function CheatTable({ rows, label }: { rows: readonly CheatRow[]; label: string }) {
   return (
-    <table className="regex-cheat-table" aria-label={label}>
+    <table className="w-full border-collapse text-[10px] leading-[1.45]" aria-label={label}>
       <thead>
         <tr>
-          <th scope="col">Expression</th>
-          <th scope="col">Meaning</th>
+          <th className="px-[7px] pb-1.5 text-left font-mono text-[8px] font-medium tracking-[0.06em] text-muted uppercase" scope="col">Expression</th>
+          <th className="px-[7px] pb-1.5 text-left font-mono text-[8px] font-medium tracking-[0.06em] text-muted uppercase" scope="col">Meaning</th>
         </tr>
       </thead>
       <tbody>
         {rows.map((row) => (
           <tr key={`${label}-${row.expression}`}>
-            <td><code>{row.expression}</code></td>
-            <td>{row.description}</td>
+            <td className="w-[34%] border-t border-[#ece9e1] p-[7px] align-top text-[#59645f]"><code className="font-mono text-[10px] whitespace-nowrap text-[#5f4300]">{row.expression}</code></td>
+            <td className="border-t border-[#ece9e1] p-[7px] align-top text-[#59645f]">{row.description}</td>
           </tr>
         ))}
       </tbody>
@@ -111,27 +111,27 @@ function CheatTable({ rows, label }: { rows: readonly CheatRow[]; label: string 
 
 export function RegexCheatsheet() {
   return (
-    <aside className="tool-card regex-cheatsheet" aria-labelledby="regex-cheatsheet-title">
-      <div className="regex-cheatsheet-heading">
+    <aside className="tool-card sticky top-[84px] max-h-[calc(100dvh-92px)] overflow-y-auto p-[clamp(22px,2.5vw,30px)] [scrollbar-color:#c0c8c4_transparent] [scrollbar-width:thin] max-[1100px]:static max-[1100px]:max-h-none max-[420px]:px-[18px]" aria-labelledby="regex-cheatsheet-title">
+      <div className="mb-5 border-b border-line pb-[17px]">
         <span className="section-index">REFERENCE</span>
-        <h2 id="regex-cheatsheet-title">JavaScript regex cheatsheet</h2>
-        <p>Common expressions accepted by the browser RegExp engine.</p>
+        <h2 className="mt-1 mb-0 text-[17px] font-semibold" id="regex-cheatsheet-title">JavaScript regex cheatsheet</h2>
+        <p className="mt-[7px] mb-0 text-[11px] leading-[1.5] text-muted">Common expressions accepted by the browser RegExp engine.</p>
       </div>
 
-      <section className="regex-cheat-section">
-        <h3>Flags</h3>
+      <section>
+        <h3 className="mt-0 mb-2 text-xs font-semibold text-[#45504c]">Flags</h3>
         <CheatTable rows={FLAGS} label="Regular expression flags" />
       </section>
 
       {CHEAT_SECTIONS.map((section) => (
-        <section className="regex-cheat-section" key={section.title}>
-          <h3>{section.title}</h3>
+        <section className="mt-[23px]" key={section.title}>
+          <h3 className="mt-0 mb-2 text-xs font-semibold text-[#45504c]">{section.title}</h3>
           <CheatTable rows={section.rows} label={section.title} />
         </section>
       ))}
 
       <a
-        className="regex-mdn-link"
+        className="mt-6 block border-t border-line pt-4 text-[11px] font-semibold text-accent-dark underline decoration-[#d9b54f] underline-offset-3"
         href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
         rel="noreferrer"
         target="_blank"

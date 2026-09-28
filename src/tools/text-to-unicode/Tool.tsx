@@ -28,9 +28,9 @@ export default function TextToUnicodeTool() {
   }
 
   return (
-    <section className="text-unicode-tool" aria-label="Text to Unicode">
-      <div className="tool-card text-unicode-panel">
-        <h2>Encode text</h2>
+    <section className="mx-auto grid w-full max-w-[900px] gap-[18px]" aria-label="Text to Unicode">
+      <div className="tool-card">
+        <h2 className="mt-0 mb-[22px] text-[17px] font-semibold">Encode text</h2>
         <div className="field-group">
           <label htmlFor="unicode-source-text">Enter text to convert to Unicode</label>
           <textarea
@@ -45,7 +45,7 @@ export default function TextToUnicodeTool() {
         <div className="field-group">
           <label htmlFor="unicode-from-text">Unicode from your text</label>
           <textarea
-            className="text-unicode-output"
+            className="font-mono text-[13px]"
             id="unicode-from-text"
             placeholder="The Unicode representation of your text will be here"
             readOnly
@@ -53,7 +53,7 @@ export default function TextToUnicodeTool() {
             value={unicodeFromText}
           />
         </div>
-        <div className="text-unicode-actions">
+        <div className="mt-[18px] flex justify-end">
           <button
             className="button button-primary"
             disabled={!unicodeFromText}
@@ -66,12 +66,12 @@ export default function TextToUnicodeTool() {
         </div>
       </div>
 
-      <div className="tool-card text-unicode-panel">
-        <h2>Decode Unicode</h2>
+      <div className="tool-card">
+        <h2 className="mt-0 mb-[22px] text-[17px] font-semibold">Decode Unicode</h2>
         <div className="field-group">
           <label htmlFor="unicode-source-value">Enter Unicode to convert to text</label>
           <textarea
-            className="text-unicode-output"
+            className="font-mono text-[13px]"
             id="unicode-source-value"
             onChange={(event) => setInputUnicode(event.target.value)}
             placeholder="Input Unicode"
@@ -89,7 +89,7 @@ export default function TextToUnicodeTool() {
             value={textFromUnicode}
           />
         </div>
-        <div className="text-unicode-actions">
+        <div className="mt-[18px] flex justify-end">
           <button
             className="button button-primary"
             disabled={!textFromUnicode}

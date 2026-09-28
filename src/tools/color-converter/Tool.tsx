@@ -25,10 +25,11 @@ function ColorField({ copied, definition, invalid, onChange, onCopy, value }: Co
   const errorId = `color-${definition.id}-error`;
 
   return (
-    <div className="color-format-field">
-      <label htmlFor={`color-${definition.id}`}>{definition.label}</label>
-      <div className="color-copy-field">
+    <div className="flex min-w-0 flex-col gap-[7px]">
+      <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`color-${definition.id}`}>{definition.label}</label>
+      <div className="grid grid-cols-[minmax(0,1fr)_42px]">
         <input
+          className="input-control rounded-r-none font-mono text-xs focus:relative focus:z-1"
           aria-describedby={invalid ? errorId : undefined}
           aria-invalid={invalid}
           id={`color-${definition.id}`}
@@ -39,6 +40,7 @@ function ColorField({ copied, definition, invalid, onChange, onCopy, value }: Co
           value={value}
         />
         <button
+          className="copy-button"
           aria-label={`Copy ${definition.label}`}
           disabled={!value}
           onClick={() => onCopy(definition.id, value)}
@@ -48,7 +50,7 @@ function ColorField({ copied, definition, invalid, onChange, onCopy, value }: Co
           {copied ? <Check size={16} aria-hidden="true" /> : <Clipboard size={16} aria-hidden="true" />}
         </button>
       </div>
-      {invalid && <p className="color-format-error" id={errorId}>Invalid {definition.label} format.</p>}
+      {invalid && <p className="error-text" id={errorId}>Invalid {definition.label} format.</p>}
     </div>
   );
 }
@@ -107,25 +109,26 @@ export default function ColorConverterTool() {
   }
 
   return (
-    <section className="tool-card color-converter-tool" aria-label="Color converter">
-      <div className="color-converter-hero">
-        <div className="color-preview-checker" aria-label={`Color preview ${currentColor}`} role="img">
-          <div className="color-preview-swatch" style={{ backgroundColor: currentColor }} />
+    <section className="tool-card mx-auto max-w-[960px]" aria-label="Color converter">
+      <div className="grid grid-cols-[minmax(190px,0.72fr)_minmax(0,1.45fr)] gap-[clamp(24px,4vw,42px)] max-[760px]:grid-cols-[170px_minmax(0,1fr)] max-[420px]:grid-cols-1">
+        <div className="min-h-[190px] overflow-hidden rounded-[11px] border border-[#ccd4d0] bg-[#eef1ef] bg-[linear-gradient(45deg,#d7ddda_25%,transparent_25%,transparent_75%,#d7ddda_75%),linear-gradient(45deg,#d7ddda_25%,transparent_25%,transparent_75%,#d7ddda_75%)] bg-[length:24px_24px] bg-[position:0_0,12px_12px] p-2.5 max-[420px]:min-h-[150px]" aria-label={`Color preview ${currentColor}`} role="img">
+          <div className="h-full min-h-[168px] w-full rounded-[7px] shadow-[inset_0_0_0_1px_rgba(20,30,26,0.1)] max-[420px]:min-h-32" style={{ backgroundColor: currentColor }} />
         </div>
 
-        <div className="color-picker-controls">
-          <div className="color-picker-heading">
+        <div className="flex min-w-0 flex-col justify-between">
+          <div>
             <span className="section-index">LIVE COLOR</span>
-            <h2>Pick a color</h2>
-            <p>Choose visually or edit any format below.</p>
+            <h2 className="mt-2 mb-1 text-2xl font-semibold tracking-[-0.025em]">Pick a color</h2>
+            <p className="m-0 text-xs leading-[1.5] text-muted">Choose visually or edit any format below.</p>
           </div>
 
-          <div className="color-picker-row">
-            <label className="color-picker-input" htmlFor="color-picker">
+          <div className="mt-[25px] grid grid-cols-[110px_minmax(0,1fr)] gap-[18px] max-[420px]:grid-cols-[100px_minmax(0,1fr)]">
+            <label className="flex flex-col gap-[9px] text-[11px] font-semibold text-[#45504c]" htmlFor="color-picker">
               <span>Color</span>
-              <span className="color-picker-button">
+              <span className="flex min-h-11 items-center gap-2 overflow-hidden rounded-[7px] border border-[#d8dfdc] bg-[#f8faf9] py-[5px] pr-[7px] pl-[11px] text-[#5f6a65] focus-within:shadow-[0_0_0_3px_rgba(252,186,3,0.2)] focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent-dark">
                 <Pipette size={17} aria-hidden="true" />
                 <input
+                  className="ml-auto h-8 w-12 cursor-pointer border-0 bg-transparent p-0 [&::-moz-color-swatch]:rounded-[5px] [&::-moz-color-swatch]:border-0 [&::-webkit-color-swatch]:rounded-[5px] [&::-webkit-color-swatch]:border-0 [&::-webkit-color-swatch-wrapper]:p-0"
                   aria-label="Choose color"
                   id="color-picker"
                   onChange={(event) => updatePicker(event.target.value)}
@@ -135,9 +138,10 @@ export default function ColorConverterTool() {
               </span>
             </label>
 
-            <label className="color-opacity-control" htmlFor="color-opacity">
-              <span>Opacity <output htmlFor="color-opacity">{opacity}%</output></span>
+            <label className="flex flex-col gap-[9px] text-[11px] font-semibold text-[#45504c]" htmlFor="color-opacity">
+              <span className="flex justify-between">Opacity <output className="font-mono text-accent-dark" htmlFor="color-opacity">{opacity}%</output></span>
               <input
+                className="m-0 h-11 w-full cursor-pointer accent-accent-dark"
                 id="color-opacity"
                 max="100"
                 min="0"
@@ -150,15 +154,15 @@ export default function ColorConverterTool() {
         </div>
       </div>
 
-      <div className="color-section-heading">
-        <div>
+      <div className="mt-[30px] mb-[17px] flex items-end justify-between border-t border-line pt-6 max-[420px]:items-start max-[420px]:flex-col max-[420px]:gap-1.5">
+        <div className="flex items-baseline gap-2.5">
           <span className="section-index">01</span>
-          <h2>Common formats</h2>
+          <h2 className="m-0 text-base font-semibold">Common formats</h2>
         </div>
-        <p>Every field accepts input and updates the rest.</p>
+        <p className="m-0 text-xs leading-[1.5] text-muted">Every field accepts input and updates the rest.</p>
       </div>
 
-      <div className="color-format-grid">
+      <div className="grid grid-cols-2 gap-[17px] max-[420px]:grid-cols-1">
         {commonFormats.map((definition) => (
           <ColorField
             copied={copiedFormat === definition.id}
@@ -172,12 +176,14 @@ export default function ColorConverterTool() {
         ))}
       </div>
 
-      <details className="color-advanced-formats">
-        <summary>
-          <span><span className="section-index">02</span> Advanced formats</span>
-          <small>HWB, LCH, and CMYK</small>
+      <details className="group mt-[27px] border-t border-line pt-5">
+        <summary className="flex cursor-pointer list-none items-center justify-between text-[#45504c] [&::-webkit-details-marker]:hidden">
+          <span className="flex items-baseline gap-2.5 text-sm font-semibold"><span className="section-index">02</span> Advanced formats</span>
+          <small className="ml-auto text-[10px] font-medium text-muted max-[420px]:hidden">HWB, LCH, and CMYK</small>
+          <span className="ml-3 font-mono text-xl text-accent-dark group-open:hidden" aria-hidden="true">+</span>
+          <span className="ml-3 hidden font-mono text-xl text-accent-dark group-open:inline" aria-hidden="true">−</span>
         </summary>
-        <div className="color-format-grid color-advanced-grid">
+        <div className="mt-5 grid grid-cols-2 gap-[17px] max-[420px]:grid-cols-1">
           {advancedFormats.map((definition) => (
             <ColorField
               copied={copiedFormat === definition.id}

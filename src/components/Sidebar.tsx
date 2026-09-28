@@ -10,22 +10,22 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
   return (
-    <aside className={`sidebar${collapsed ? ' is-collapsed' : ''}${mobileOpen ? ' is-mobile-open' : ''}`}>
-      <nav className="tool-navigation" aria-label="Developer tools">
+    <aside className={`fixed inset-y-0 left-0 z-30 flex flex-col overflow-hidden bg-sidebar text-[#eaf0ed] transition-[width,transform] duration-180 max-[760px]:w-[min(286px,86vw)] max-[760px]:-translate-x-full ${collapsed ? 'w-(--sidebar-collapsed-width)' : 'w-(--sidebar-width)'} ${mobileOpen ? 'max-[760px]:translate-x-0' : ''}`}>
+      <nav className={`flex-1 overflow-y-auto pt-2 pb-7 [scrollbar-color:#42534d_transparent] [scrollbar-width:thin] ${collapsed ? 'px-3 max-[760px]:px-3.5' : 'px-3.5'}`} aria-label="Developer tools">
         {[...toolsByCategory].map(([category, categoryTools]) => (
-          <div className="tool-group" key={category}>
+          <div className="[&+div]:mt-[22px]" key={category}>
             {!collapsed && (
-              <div className="tool-group-title">
+              <div className="mx-2 mb-2 flex items-center gap-1 font-mono text-[10px] tracking-[0.14em] text-[#74877f] uppercase [&_svg]:text-accent">
                 <ChevronRight size={14} aria-hidden="true" />
                 <span>{category}</span>
               </div>
             )}
-            <div className="tool-group-links">
+            <div>
               {categoryTools.map((tool) => {
                 const Icon = tool.icon;
                 return (
                   <NavLink
-                    className={({ isActive }) => `tool-link${isActive ? ' is-active' : ''}`}
+                    className={({ isActive }) => `relative my-0.5 flex min-h-11 items-center rounded-[7px] px-[13px] py-2.5 text-[13px] transition-colors ${collapsed ? 'justify-center px-2.5 max-[760px]:justify-start max-[760px]:px-[13px]' : 'gap-3'} ${isActive ? 'bg-[rgba(252,186,3,0.16)] text-white before:absolute before:left-[-14px] before:h-[22px] before:w-[3px] before:rounded-r-sm before:bg-accent' : 'text-[#aebbb6] hover:bg-white/5 hover:text-[#f5faf8]'}`}
                     key={tool.id}
                     onClick={onClose}
                     title={collapsed ? tool.title : undefined}

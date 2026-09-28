@@ -82,29 +82,29 @@ function IdentifierRow({ definition }: IdentifierRowProps) {
   }
 
   return (
-    <section className={`identifier-row identifier-row-${result.status}`} aria-labelledby={`${definition.kind}-label`}>
-      <div className="identifier-row-heading">
+    <section className="border-line py-[clamp(24px,3vw,34px)] not-first:border-t max-[760px]:overflow-x-auto max-[760px]:pb-5" aria-labelledby={`${definition.kind}-label`}>
+      <div className="mb-4 flex items-start justify-between">
         <div>
-          <h2 id={`${definition.kind}-label`}>{definition.label}</h2>
-          <p id={`${definition.kind}-hint`}>Example: {definition.example}</p>
+          <h2 className="mt-0 mb-1 text-[17px]" id={`${definition.kind}-label`}>{definition.label}</h2>
+          <p className="m-0 font-mono text-[10px] text-muted" id={`${definition.kind}-hint`}>Example: {definition.example}</p>
         </div>
-        <span className={`identifier-badge identifier-badge-${result.status}`}>
+        <span className={`inline-flex items-center gap-1 rounded-full px-[9px] py-1.5 font-mono text-[9px] font-semibold tracking-[0.06em] uppercase ${result.status === 'valid' ? 'bg-[#e4f4e9] text-[#28733e]' : result.status === 'invalid' ? 'bg-[#fae7e5] text-[#9a382f]' : 'bg-[#f1f4f2] text-[#66716d]'}`}>
           {result.status === 'valid' && <Check size={14} aria-hidden="true" />}
           {result.status === 'invalid' && <CircleAlert size={14} aria-hidden="true" />}
           {result.status === 'empty' ? 'Ready' : result.status}
         </span>
       </div>
 
-      <div className="identifier-cells" role="group" aria-labelledby={`${definition.kind}-label`}>
+      <div className="flex min-w-max gap-2.5" role="group" aria-labelledby={`${definition.kind}-label`}>
         {characters.map((character, index) => (
-          <div className="identifier-cell-group" key={index}>
+          <div className="flex items-center gap-2.5" key={index}>
             <input
               aria-describedby={describedBy}
               aria-invalid={result.status === 'invalid'}
               aria-label={`${definition.label} character ${index + 1} of ${definition.length}`}
               autoCapitalize="characters"
               autoComplete="off"
-              className="identifier-cell"
+              className={`aspect-square w-[54px] rounded-[9px] border bg-[#f8faf9] p-0 text-center font-mono text-[22px] font-semibold text-ink transition-[border-color,box-shadow,background] focus:border-accent focus:bg-[#fffdf5] focus:shadow-focus focus:outline-0 aria-invalid:border-[#d49690] max-[760px]:w-12 ${result.status === 'valid' ? 'border-[#96cda6]' : 'border-[#d8dfdc]'}`}
               inputMode={index === definition.length - 1 && definition.kind !== 'isbn13' ? 'text' : 'numeric'}
               maxLength={1}
               onChange={(event) => updateCharacter(index, event.target.value)}
@@ -115,12 +115,12 @@ function IdentifierRow({ definition }: IdentifierRowProps) {
               type="text"
               value={character}
             />
-            {separators.has(index) && <span className="identifier-separator" aria-hidden="true">-</span>}
+            {separators.has(index) && <span className="font-mono text-[21px] font-semibold text-[#53605b]" aria-hidden="true">-</span>}
           </div>
         ))}
       </div>
 
-      <p className={`identifier-status identifier-status-${result.status}`} id={`${definition.kind}-status`} aria-live="polite">
+      <p className={`mt-[13px] mb-0 min-h-[18px] text-xs ${result.status === 'valid' ? 'text-[#28733e]' : result.status === 'invalid' ? 'text-[#a53b32]' : 'text-muted'}`} id={`${definition.kind}-status`} aria-live="polite">
         {result.message}
       </p>
     </section>
@@ -129,12 +129,12 @@ function IdentifierRow({ definition }: IdentifierRowProps) {
 
 export default function IssnIsbnValidatorTool() {
   return (
-    <section className="tool-card identifier-validator" aria-label="ISSN and ISBN validator">
-      <div className="identifier-intro">
+    <section className="tool-card mx-auto max-w-[1180px] overflow-hidden max-[420px]:px-[18px]" aria-label="ISSN and ISBN validator">
+      <div className="mb-1 flex items-baseline justify-between gap-[18px] border-b border-line pb-5 max-[760px]:items-start max-[760px]:flex-col max-[760px]:gap-2">
         <span className="section-index">CHECK DIGITS</span>
-        <p>Type each identifier below or paste a complete value into its first box.</p>
+        <p className="m-0 text-xs text-muted">Type each identifier below or paste a complete value into its first box.</p>
       </div>
-      <div className="identifier-rows">
+      <div className="flex flex-col">
         {IDENTIFIER_DEFINITIONS.map((definition) => (
           <IdentifierRow definition={definition} key={definition.kind} />
         ))}

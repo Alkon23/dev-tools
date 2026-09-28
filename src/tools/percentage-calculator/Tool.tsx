@@ -104,21 +104,22 @@ function CalculatorCard({ copiedCalculator, definition, index, onCopy }: Calcula
   const resultErrorId = `${definition.id}-result-error`;
 
   return (
-    <section className="tool-card percentage-card" aria-labelledby={`${definition.id}-title`}>
-      <div className="percentage-card-heading">
-        <div>
+    <section className="tool-card p-[clamp(22px,3vw,32px)] max-[420px]:px-[18px]" aria-labelledby={`${definition.id}-title`}>
+      <div className="mb-[22px] flex items-start justify-between gap-5 border-b border-line pb-[18px] max-[420px]:flex-col max-[420px]:gap-3">
+        <div className="min-w-0">
           <span className="section-index">{String(index + 1).padStart(2, '0')}</span>
-          <h2 id={`${definition.id}-title`}>{definition.title}</h2>
-          <p>{definition.description}</p>
+          <h2 className="ml-[9px] inline text-lg font-semibold" id={`${definition.id}-title`}>{definition.title}</h2>
+          <p className="mt-1.5 mb-0 text-xs leading-[1.5] text-muted">{definition.description}</p>
         </div>
-        <code>{definition.formula}</code>
+        <code className="shrink-0 whitespace-nowrap rounded-[7px] border border-[#edda99] bg-[#fff3c9] px-2.5 py-2 font-mono text-[10px] text-[#6a4d00]">{definition.formula}</code>
       </div>
 
-      <div className="percentage-fields">
-        <div className="percentage-field">
-          <label htmlFor={`${definition.id}-left`}>{definition.leftLabel}</label>
-          <div className={`percentage-input-shell${leftError ? ' is-invalid' : ''}`}>
+      <div className="grid grid-cols-3 gap-[17px] max-[760px]:grid-cols-1">
+        <div className="flex min-w-0 flex-col gap-[7px]">
+          <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`${definition.id}-left`}>{definition.leftLabel}</label>
+          <div className={`flex min-w-0 items-stretch overflow-hidden rounded-[7px] border bg-[#f8faf9] transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-focus ${leftError ? 'border-[#b74b42]' : 'border-[#d8dfdc]'}`}>
             <input
+              className="min-h-11 min-w-0 flex-1 bg-transparent px-3 py-[9px] font-mono text-xs text-ink outline-0 placeholder:text-[#929c98]"
               aria-describedby={leftError ? leftErrorId : undefined}
               aria-invalid={Boolean(leftError)}
               autoFocus={index === 0}
@@ -130,15 +131,16 @@ function CalculatorCard({ copiedCalculator, definition, index, onCopy }: Calcula
               type="text"
               value={leftInput}
             />
-            {definition.leftSuffix && <span aria-hidden="true">{definition.leftSuffix}</span>}
+            {definition.leftSuffix && <span className="flex min-w-[38px] shrink-0 items-center justify-center border-l border-[#d8dfdc] bg-[#eef1ef] px-2 font-mono text-[10px] text-[#65706c]" aria-hidden="true">{definition.leftSuffix}</span>}
           </div>
-          {leftError && <p className="percentage-field-error" id={leftErrorId}>{leftError}</p>}
+          {leftError && <p className="error-text leading-[1.4]" id={leftErrorId}>{leftError}</p>}
         </div>
 
-        <div className="percentage-field">
-          <label htmlFor={`${definition.id}-right`}>{definition.rightLabel}</label>
-          <div className={`percentage-input-shell${rightError ? ' is-invalid' : ''}`}>
+        <div className="flex min-w-0 flex-col gap-[7px]">
+          <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`${definition.id}-right`}>{definition.rightLabel}</label>
+          <div className={`flex min-w-0 items-stretch overflow-hidden rounded-[7px] border bg-[#f8faf9] transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-focus ${rightError ? 'border-[#b74b42]' : 'border-[#d8dfdc]'}`}>
             <input
+              className="min-h-11 min-w-0 flex-1 bg-transparent px-3 py-[9px] font-mono text-xs text-ink outline-0 placeholder:text-[#929c98]"
               aria-describedby={rightError ? rightErrorId : undefined}
               aria-invalid={Boolean(rightError)}
               id={`${definition.id}-right`}
@@ -150,13 +152,14 @@ function CalculatorCard({ copiedCalculator, definition, index, onCopy }: Calcula
               value={rightInput}
             />
           </div>
-          {rightError && <p className="percentage-field-error" id={rightErrorId}>{rightError}</p>}
+          {rightError && <p className="error-text leading-[1.4]" id={rightErrorId}>{rightError}</p>}
         </div>
 
-        <div className="percentage-field percentage-result-field" aria-live="polite">
-          <label htmlFor={`${definition.id}-result`}>Result</label>
-          <div className={`percentage-input-shell percentage-result-shell${resultError ? ' is-invalid' : ''}`}>
+        <div className="flex min-w-0 flex-col gap-[7px]" aria-live="polite">
+          <label className="text-[11px] font-semibold text-[#45504c]" htmlFor={`${definition.id}-result`}>Result</label>
+          <div className={`flex min-w-0 items-stretch overflow-hidden rounded-[7px] border bg-[#f8faf9] transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-focus ${resultError ? 'border-[#b74b42]' : 'border-[#d8dfdc]'}`}>
             <input
+              className="min-h-11 min-w-0 flex-1 bg-transparent px-3 py-[9px] font-mono text-xs font-semibold text-[#33403b] outline-0 placeholder:text-[#929c98]"
               aria-describedby={resultError ? resultErrorId : undefined}
               aria-invalid={Boolean(resultError)}
               aria-label={`${definition.title} result`}
@@ -166,8 +169,9 @@ function CalculatorCard({ copiedCalculator, definition, index, onCopy }: Calcula
               type="text"
               value={result}
             />
-            {definition.resultSuffix && <span aria-hidden="true">{definition.resultSuffix}</span>}
+            {definition.resultSuffix && <span className="flex min-w-[38px] shrink-0 items-center justify-center border-l border-[#d8dfdc] bg-[#eef1ef] px-2 font-mono text-[10px] text-[#65706c]" aria-hidden="true">{definition.resultSuffix}</span>}
             <button
+              className="flex w-[42px] shrink-0 cursor-pointer items-center justify-center border-0 border-l border-[#d8dfdc] bg-[#f1f4f2] text-[#5f6a65] enabled:hover:bg-[#fff2c2] enabled:hover:text-accent-dark focus-visible:shadow-[inset_0_0_0_2px_var(--color-accent-dark)] focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-45"
               aria-label={`Copy ${definition.title} result`}
               disabled={!result}
               onClick={() => onCopy(definition.id, result)}
@@ -179,7 +183,7 @@ function CalculatorCard({ copiedCalculator, definition, index, onCopy }: Calcula
                 : <Clipboard size={16} aria-hidden="true" />}
             </button>
           </div>
-          {resultError && <p className="percentage-field-error" id={resultErrorId}>{resultError}</p>}
+          {resultError && <p className="error-text leading-[1.4]" id={resultErrorId}>{resultError}</p>}
         </div>
       </div>
     </section>
@@ -206,7 +210,7 @@ export default function PercentageCalculatorTool() {
   }
 
   return (
-    <div className="percentage-calculator-tool" aria-label="Percentage calculator" role="region">
+    <div className="mx-auto flex max-w-[820px] flex-col gap-[18px]" aria-label="Percentage calculator" role="region">
       {calculators.map((definition, index) => (
         <CalculatorCard
           copiedCalculator={copiedCalculator}
