@@ -68,6 +68,16 @@ describe('App', () => {
     expect(within(screen.getByRole('navigation', { name: 'Developer tools' })).getByRole('link', { name: 'ASCII tree generator' })).toHaveAttribute('aria-current', 'page');
   });
 
+  it('loads the Markdown editor directly under Text and marks its sidebar link active', async () => {
+    URL.createObjectURL = vi.fn(() => 'blob:markdown-draft');
+    URL.revokeObjectURL = vi.fn();
+    render(<MemoryRouter initialEntries={['/tools/markdown-editor']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Markdown editor' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Markdown editor' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(within(screen.getByRole('navigation', { name: 'Developer tools' })).getByRole('link', { name: 'Markdown editor' })).toHaveAttribute('aria-current', 'page');
+  });
+
   it('loads the regex tester directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/regex-tester']}><App /></MemoryRouter>);
 
