@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor/editor/editor.api.js';
 import EditorWorker from 'monaco-editor/editor/editor.worker.js?worker';
 import 'monaco-editor/features/codicon/register.js';
 import { RegexCheatsheet } from './RegexCheatsheet';
-import { REGEX_LANGUAGE_ID, REGEX_THEME_ID, registerRegexLanguage } from './regexLanguage';
+import { REGEX_DARK_THEME_ID, REGEX_LANGUAGE_ID, REGEX_THEME_ID, registerRegexLanguage } from './regexLanguage';
 import {
   DEFAULT_REGEX_FLAGS,
   buildRegexFlags,
@@ -61,6 +61,10 @@ export default function RegexTesterTool() {
     }
 
     registerRegexLanguage();
+    const syncTheme = () => monaco.editor.setTheme(document.documentElement.dataset.theme === 'dark' ? REGEX_DARK_THEME_ID : REGEX_THEME_ID);
+    syncTheme();
+    const themeObserver = new MutationObserver(syncTheme);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     const patternModel = monaco.editor.createModel(INITIAL_PATTERN, REGEX_LANGUAGE_ID);
     const textModel = monaco.editor.createModel(INITIAL_TEXT, 'plaintext');
     const patternEditor = monaco.editor.create(patternContainerRef.current, {
@@ -79,7 +83,7 @@ export default function RegexTesterTool() {
       renderLineHighlight: 'none',
       scrollBeyondLastLine: false,
       scrollbar: { horizontal: 'auto', vertical: 'hidden', alwaysConsumeMouseWheel: false },
-      theme: REGEX_THEME_ID,
+      theme: document.documentElement.dataset.theme === 'dark' ? REGEX_DARK_THEME_ID : REGEX_THEME_ID,
       wordWrap: 'off',
     });
     const textEditor = monaco.editor.create(textContainerRef.current, {
@@ -93,7 +97,7 @@ export default function RegexTesterTool() {
       overviewRulerLanes: 0,
       padding: { top: 14, bottom: 14 },
       scrollBeyondLastLine: false,
-      theme: REGEX_THEME_ID,
+      theme: document.documentElement.dataset.theme === 'dark' ? REGEX_DARK_THEME_ID : REGEX_THEME_ID,
       wordWrap: 'on',
     });
     const patternListener = patternModel.onDidChangeContent(() => setPattern(patternModel.getValue()));
@@ -104,6 +108,7 @@ export default function RegexTesterTool() {
     decorationsRef.current = textEditor.createDecorationsCollection();
 
     return () => {
+      themeObserver.disconnect();
       monaco.editor.setModelMarkers(patternModel, 'regex-tester', []);
       patternListener.dispose();
       textListener.dispose();

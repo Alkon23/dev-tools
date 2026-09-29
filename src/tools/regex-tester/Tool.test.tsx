@@ -46,6 +46,7 @@ const monacoMock = vi.hoisted(() => {
     models,
     register: vi.fn(),
     setModelMarkers: vi.fn(),
+    setTheme: vi.fn(),
     setMonarchTokensProvider: vi.fn(),
   };
 });
@@ -73,6 +74,7 @@ vi.mock('monaco-editor/editor/editor.api.js', () => ({
     createModel: monacoMock.createModel,
     defineTheme: monacoMock.defineTheme,
     setModelMarkers: monacoMock.setModelMarkers,
+    setTheme: monacoMock.setTheme,
   },
   languages: {
     getLanguages: monacoMock.getLanguages,

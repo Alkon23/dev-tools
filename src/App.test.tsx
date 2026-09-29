@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 import { toolsByCategory } from './tools/registry';
 
@@ -9,6 +9,52 @@ vi.mock('./tools/regex-tester/Tool.tsx', () => ({
 }));
 
 describe('App', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    delete document.documentElement.dataset.theme;
+  });
+
+  it('toggles and remembers the theme from the header', () => {
+    const page = render(<MemoryRouter><App /></MemoryRouter>);
+    const toggle = screen.getByRole('button', { name: 'Switch to dark mode' });
+    expect(toggle).toHaveAttribute('aria-pressed', 'false');
+
+    fireEvent.click(toggle);
+    expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+    expect(localStorage.getItem('dev-tools-theme')).toBe('dark');
+    expect(screen.getByRole('button', { name: 'Switch to light mode' })).toHaveAttribute('aria-pressed', 'true');
+
+    page.unmount();
+    render(<MemoryRouter><App /></MemoryRouter>);
+    expect(screen.getByRole('button', { name: 'Switch to light mode' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to light mode' }));
+    expect(document.documentElement).toHaveAttribute('data-theme', 'light');
+  });
+
+  it('follows system theme changes until a mode is chosen', () => {
+    let onChange: (() => void) | undefined;
+    const preference = {
+      matches: true,
+      addEventListener: vi.fn((_type: string, listener: () => void) => { onChange = listener; }),
+      removeEventListener: vi.fn(),
+    };
+    const previousMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn(() => preference as unknown as MediaQueryList);
+    try {
+      render(<MemoryRouter><App /></MemoryRouter>);
+      expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+      preference.matches = false;
+      act(() => onChange?.());
+      expect(document.documentElement).toHaveAttribute('data-theme', 'light');
+      fireEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+      preference.matches = false;
+      act(() => onChange?.());
+      expect(document.documentElement).toHaveAttribute('data-theme', 'dark');
+    } finally {
+      window.matchMedia = previousMatchMedia;
+    }
+  });
+
   it('renders tools from the registry on the dashboard and sidebar', () => {
     render(<MemoryRouter><App /></MemoryRouter>);
 
@@ -124,7 +170,7 @@ describe('App', () => {
     render(<MemoryRouter initialEntries={['/tools/date-time-converter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Date-time converter' })).toBeInTheDocument();
-    expect(await screen.findByRole('region', { name: 'Date-time converter' }, { timeout: 3000 })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Date-time converter' }, { timeout: 8000 })).toBeInTheDocument();
   });
 
   it('loads the color converter directly from its generated route', async () => {

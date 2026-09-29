@@ -17,6 +17,10 @@ export default function TextDiffTool() {
 
     const originalModel = monaco.editor.createModel('original text', 'plaintext');
     const modifiedModel = monaco.editor.createModel('modified text', 'plaintext');
+    const syncTheme = () => monaco.editor.setTheme(document.documentElement.dataset.theme === 'dark' ? 'vs-dark' : 'vs');
+    syncTheme();
+    const themeObserver = new MutationObserver(syncTheme);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     const editor = monaco.editor.createDiffEditor(editorContainerRef.current, {
       automaticLayout: true,
       minimap: { enabled: false },
@@ -30,6 +34,7 @@ export default function TextDiffTool() {
     editor.setModel({ original: originalModel, modified: modifiedModel });
 
     return () => {
+      themeObserver.disconnect();
       editor.dispose();
       originalModel.dispose();
       modifiedModel.dispose();

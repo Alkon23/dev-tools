@@ -17,6 +17,7 @@ const monacoMock = vi.hoisted(() => {
       return model;
     }),
     editor,
+    setTheme: vi.fn(),
     models,
   };
 });
@@ -25,6 +26,7 @@ vi.mock('monaco-editor/editor/editor.api.js', () => ({
   editor: {
     createDiffEditor: monacoMock.createDiffEditor,
     createModel: monacoMock.createModel,
+    setTheme: monacoMock.setTheme,
   },
 }));
 

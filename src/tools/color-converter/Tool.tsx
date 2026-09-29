@@ -111,7 +111,7 @@ export default function ColorConverterTool() {
   return (
     <section className="tool-card mx-auto max-w-[960px]" aria-label="Color converter">
       <div className="grid grid-cols-[minmax(190px,0.72fr)_minmax(0,1.45fr)] gap-[clamp(24px,4vw,42px)] max-[760px]:grid-cols-[170px_minmax(0,1fr)] max-[420px]:grid-cols-1">
-        <div className="min-h-[190px] overflow-hidden rounded-[11px] border border-[#ccd4d0] bg-[#eef1ef] bg-[linear-gradient(45deg,#d7ddda_25%,transparent_25%,transparent_75%,#d7ddda_75%),linear-gradient(45deg,#d7ddda_25%,transparent_25%,transparent_75%,#d7ddda_75%)] bg-[length:24px_24px] bg-[position:0_0,12px_12px] p-2.5 max-[420px]:min-h-[150px]" aria-label={`Color preview ${currentColor}`} role="img">
+        <div className="min-h-[190px] overflow-hidden rounded-[11px] border border-[#ccd4d0] bg-[#eef1ef] bg-[linear-gradient(45deg,var(--checker-tile)_25%,transparent_25%,transparent_75%,var(--checker-tile)_75%),linear-gradient(45deg,var(--checker-tile)_25%,transparent_25%,transparent_75%,var(--checker-tile)_75%)] bg-[length:24px_24px] bg-[position:0_0,12px_12px] p-2.5 max-[420px]:min-h-[150px]" aria-label={`Color preview ${currentColor}`} role="img">
           <div className="h-full min-h-[168px] w-full rounded-[7px] shadow-[inset_0_0_0_1px_rgba(20,30,26,0.1)] max-[420px]:min-h-32" style={{ backgroundColor: currentColor }} />
         </div>
 

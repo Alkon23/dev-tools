@@ -2,6 +2,7 @@ import * as monaco from 'monaco-editor/editor/editor.api.js';
 
 export const REGEX_LANGUAGE_ID = 'javascript-regexp';
 export const REGEX_THEME_ID = 'regex-tester-light';
+export const REGEX_DARK_THEME_ID = 'regex-tester-dark';
 
 export function registerRegexLanguage(): void {
   if (!monaco.languages.getLanguages().some(({ id }) => id === REGEX_LANGUAGE_ID)) {
@@ -50,6 +51,29 @@ export function registerRegexLanguage(): void {
       'editor.selectionBackground': '#F3D77A66',
       'editor.inactiveSelectionBackground': '#E8DFC466',
       'editorLineNumber.foreground': '#939C98',
+    },
+  });
+
+  monaco.editor.defineTheme(REGEX_DARK_THEME_ID, {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [
+      { token: 'regexp.literal', foreground: 'E4EBE5' },
+      { token: 'regexp.escape', foreground: '70D8C7', fontStyle: 'bold' },
+      { token: 'regexp.character-class', foreground: 'F0BC70', fontStyle: 'bold' },
+      { token: 'regexp.range', foreground: 'F58C83', fontStyle: 'bold' },
+      { token: 'regexp.group', foreground: 'C6A6FF', fontStyle: 'bold' },
+      { token: 'regexp.quantifier', foreground: 'FFA16B', fontStyle: 'bold' },
+      { token: 'regexp.anchor', foreground: 'F393BE', fontStyle: 'bold' },
+      { token: 'regexp.alternation', foreground: 'F58C83', fontStyle: 'bold' },
+    ],
+    colors: {
+      'editor.background': '#292F2B',
+      'editor.foreground': '#F0EDE6',
+      'editorCursor.foreground': '#F0C857',
+      'editor.selectionBackground': '#80662688',
+      'editor.inactiveSelectionBackground': '#67583466',
+      'editorLineNumber.foreground': '#AAB1AB',
     },
   });
 }

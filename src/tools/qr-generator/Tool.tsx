@@ -229,7 +229,7 @@ export default function QrGeneratorTool() {
       </div>
 
       <div className="flex min-w-0 flex-col items-stretch justify-center max-[760px]:mx-auto max-[760px]:w-full max-[760px]:max-w-[340px]">
-        <div className="flex min-h-[324px] items-center justify-center overflow-hidden rounded-[10px] border border-[#d0d8d4] bg-[#eef1ef] bg-[linear-gradient(45deg,#dce2df_25%,transparent_25%,transparent_75%,#dce2df_75%),linear-gradient(45deg,#dce2df_25%,transparent_25%,transparent_75%,#dce2df_75%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px] p-3" role="img" aria-label="Generated QR code preview">
+        <div className="flex min-h-[324px] items-center justify-center overflow-hidden rounded-[10px] border border-[#d0d8d4] bg-[#eef1ef] bg-[linear-gradient(45deg,var(--checker-tile)_25%,transparent_25%,transparent_75%,var(--checker-tile)_75%),linear-gradient(45deg,var(--checker-tile)_25%,transparent_25%,transparent_75%,var(--checker-tile)_75%)] bg-[length:20px_20px] bg-[position:0_0,10px_10px] p-3" role="img" aria-label="Generated QR code preview">
           <div className="flex w-full max-w-[300px] shadow-[0_10px_28px_rgba(29,46,40,0.15)] [&_canvas]:block [&_canvas]:h-auto [&_canvas]:w-full [&_canvas]:max-w-full [&_svg]:block [&_svg]:h-auto [&_svg]:w-full [&_svg]:max-w-full" ref={previewRef} />
         </div>
         <p className="mt-3 mb-4 text-center font-mono text-[9px] tracking-[0.05em] text-muted uppercase" aria-live="polite">
