@@ -1,4 +1,4 @@
-import { Braces } from 'lucide-react';
+import { Link } from 'lucide-react';
 import { defineTool } from '../defineTool';
 
 export default defineTool({
@@ -7,6 +7,6 @@ export default defineTool({
   description: 'Encode text as a URL component or decode percent-encoded text.',
   category: 'Web',
   keywords: ['url', 'encode', 'decode', 'percent', 'uri', 'component'],
-  icon: Braces,
+  icon: Link,
   order: 10,
 });

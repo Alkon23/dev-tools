@@ -1,4 +1,4 @@
-import { ListTree } from 'lucide-react';
+import { Unlink } from 'lucide-react';
 import { defineTool } from '../defineTool';
 
 export default defineTool({
@@ -7,6 +7,6 @@ export default defineTool({
   description: 'Inspect, edit, remove, and rebuild the individual parts of a URL.',
   category: 'Web',
   keywords: ['url', 'parse', 'protocol', 'hostname', 'port', 'query', 'fragment'],
-  icon: ListTree,
+  icon: Unlink,
   order: 20,
 });
