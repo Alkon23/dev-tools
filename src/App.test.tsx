@@ -1,7 +1,8 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { App } from './App';
+import { toolsByCategory } from './tools/registry';
 
 vi.mock('./tools/regex-tester/Tool.tsx', () => ({
   default: () => <section aria-label="Regex tester" />,
@@ -11,8 +12,31 @@ describe('App', () => {
   it('renders tools from the registry on the dashboard and sidebar', () => {
     render(<MemoryRouter><App /></MemoryRouter>);
 
-    expect(screen.getByRole('heading', { name: 'Available tools' })).toBeInTheDocument();
+    expect(screen.queryByText('Small tools.')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Available tools' })).not.toBeInTheDocument();
+    const categoryLinks = screen.getByRole('navigation', { name: 'Jump to category' });
+    expect(screen.getByRole('region', { name: 'Categories' })).toHaveTextContent('00');
+    expect(within(categoryLinks).getAllByRole('link')).toHaveLength(toolsByCategory.size);
+    for (const [index, [category, categoryTools]] of [...toolsByCategory].entries()) {
+      const section = screen.getByRole('region', { name: category });
+      expect(section).toHaveAttribute('id', `category-${index}`);
+      expect(within(categoryLinks).getByRole('link', { name: new RegExp(category) })).toHaveAttribute('href', `#category-${index}`);
+      expect(within(section).getAllByRole('link')).toHaveLength(categoryTools.length);
+    }
     expect(screen.getAllByRole('link', { name: /Text case converter/ })).toHaveLength(2);
+    expect(screen.getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/Alkon23/dev-tools');
+  });
+
+  it('shows category labels in the mobile drawer after collapsing the sidebar', () => {
+    render(<MemoryRouter><App /></MemoryRouter>);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
+    expect(within(screen.getByRole('navigation', { name: 'Developer tools' })).queryByText('Converters')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
+    expect(within(navigation).getByText('Converters')).toBeInTheDocument();
+    expect(within(navigation).getByRole('link', { name: 'Color converter' })).toBeInTheDocument();
   });
 
   it('renders a lazy tool inside the tool container', async () => {

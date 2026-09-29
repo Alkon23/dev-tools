@@ -1,4 +1,4 @@
-import { ChevronLeft, Home, Menu } from 'lucide-react';
+import { ChevronLeft, Github, Home, Menu } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
@@ -47,6 +47,9 @@ export function AppShell() {
           </Link>
           <div className="mx-[7px] h-[22px] w-px bg-line max-[420px]:hidden" />
           <span className="font-mono text-[10px] tracking-[0.12em] text-[#626d68] uppercase max-[420px]:hidden">Developer workspace</span>
+          <a className="ml-auto inline-flex size-[38px] items-center justify-center rounded-[7px] text-[#59645f] transition-colors hover:bg-[#e6ebe8] hover:text-ink" href="https://github.com/Alkon23/dev-tools" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
+            <Github size={20} strokeWidth={1.8} aria-hidden="true" />
+          </a>
         </header>
 
         <main className="mx-auto min-h-[calc(100vh-68px)] max-w-[1680px] px-[clamp(24px,3vw,48px)] pt-9 pb-14 max-[760px]:px-[18px] max-[760px]:pt-7 max-[760px]:pb-12">
