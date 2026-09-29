@@ -1,4 +1,5 @@
 packages: []
 
 allowBuilds:
+  canvas: true
   esbuild: true
