@@ -60,6 +60,14 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Crontab generator' })).toBeInTheDocument();
   });
 
+  it('loads the ASCII tree generator directly and marks its sidebar link active', async () => {
+    render(<MemoryRouter initialEntries={['/tools/ascii-tree']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'ASCII tree generator' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'ASCII tree generator' })).toBeInTheDocument();
+    expect(within(screen.getByRole('navigation', { name: 'Developer tools' })).getByRole('link', { name: 'ASCII tree generator' })).toHaveAttribute('aria-current', 'page');
+  });
+
   it('loads the regex tester directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/regex-tester']}><App /></MemoryRouter>);
 
