@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib';
 import { describe, expect, it } from 'vitest';
-import { mergePdfFiles, moveItem, rebuildPdf } from './pdfDocument';
+import { mergePdfFiles, moveItem, pdfDownloadName, rebuildPdf } from './pdfDocument';
 
 async function createPdfFile(name: string, pageCount: number): Promise<File> {
   const document = await PDFDocument.create();
@@ -14,6 +14,12 @@ async function createPdfFile(name: string, pageCount: number): Promise<File> {
 }
 
 describe('pdfDocument', () => {
+  it('normalizes output names and falls back for empty names', () => {
+    expect(pdfDownloadName(' Report.PDF.pdf ', 'default.pdf')).toBe('Report.pdf');
+    expect(pdfDownloadName('Report', 'default.pdf')).toBe('Report.pdf');
+    expect(pdfDownloadName('  ', 'default.pdf')).toBe('default.pdf');
+    expect(pdfDownloadName('.pdf', 'default.pdf')).toBe('default.pdf');
+  });
   it('moves items without changing the original list', () => {
     const source = ['first', 'second', 'third'];
 

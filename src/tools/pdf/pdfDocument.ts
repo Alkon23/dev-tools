@@ -30,6 +30,22 @@ export function outputFileName(fileName: string, suffix: string): string {
   return `${baseName || 'document'}_${suffix}.pdf`;
 }
 
+export function pdfDownloadName(name: string, fallback: string): string {
+  const baseName = name.trim().replace(/(?:\.pdf)+$/i, '').trim();
+  return baseName ? `${baseName}.pdf` : fallback;
+}
+
+export function downloadPdf(blob: Blob, name: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export async function mergePdfFiles(files: readonly File[]): Promise<Blob> {
   if (files.length < 2) {
     throw new Error('Add at least two PDF files to merge.');

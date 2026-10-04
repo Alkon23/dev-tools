@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
-import { ArrowDown, ArrowUp, Combine, Download, FileText, GripVertical, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { ArrowDown, ArrowUp, Download, FileText, GripVertical, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { formatFileSize, isPdfFile, mergePdfFiles, moveItem, outputFileName } from '../pdf/pdfDocument';
+import { downloadPdf, formatFileSize, isPdfFile, mergePdfFiles, moveItem, outputFileName, pdfDownloadName } from '../pdf/pdfDocument';
 
 interface MergeFile {
   id: string;
@@ -17,27 +17,21 @@ export default function PdfMergerTool() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [isDraggingFiles, setIsDraggingFiles] = useState(false);
   const [isMerging, setIsMerging] = useState(false);
-  const [result, setResult] = useState<Blob | null>(null);
+  const [resultName, setResultName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const resultFileName = outputFileName(files[0]?.file.name ?? 'merged', 'merged');
-  const downloadUrl = useMemo(() => result ? URL.createObjectURL(result) : null, [result]);
-
-  useEffect(() => () => {
-    if (downloadUrl) {
-      URL.revokeObjectURL(downloadUrl);
-    }
-  }, [downloadUrl]);
+  const defaultFileName = outputFileName(files[0]?.file.name ?? 'merged', 'merged');
+  const resultFileName = pdfDownloadName(resultName ?? defaultFileName, defaultFileName);
 
   function addFiles(selectedFiles: File[]) {
+    if (isMerging) return;
     const pdfFiles = selectedFiles.filter(isPdfFile);
     if (!pdfFiles.length) {
       setError('Choose PDF files to merge.');
       return;
     }
     setFiles((current) => [...current, ...pdfFiles.map(createMergeFile)]);
-    setResult(null);
     setError(pdfFiles.length === selectedFiles.length ? null : 'Only PDF files were added.');
   }
 
@@ -53,34 +47,32 @@ export default function PdfMergerTool() {
   }
 
   function moveFile(fromIndex: number, toIndex: number) {
+    if (isMerging) return;
     setFiles((current) => moveItem(current, fromIndex, toIndex));
-    setResult(null);
   }
 
-  async function mergeFiles() {
+  async function mergeFiles(action: 'download' | 'edit') {
+    if (isMerging) return;
     if (files.length < 2) {
       setError('Add at least two PDF files to merge.');
       return;
     }
     setIsMerging(true);
     setError(null);
-    setResult(null);
     try {
-      setResult(await mergePdfFiles(files.map(({ file }) => file)));
+      const result = await mergePdfFiles(files.map(({ file }) => file));
+      if (action === 'download') {
+        downloadPdf(result, resultFileName);
+      } else {
+        navigate('/tools/pdf-page-manager', {
+          state: { file: new File([result], resultFileName, { type: 'application/pdf' }) },
+        });
+      }
     } catch {
       setError('One or more files could not be read. Password-protected or damaged PDFs cannot be merged.');
     } finally {
       setIsMerging(false);
     }
-  }
-
-  function editResult() {
-    if (!result) {
-      return;
-    }
-    navigate('/tools/pdf-page-manager', {
-      state: { file: new File([result], resultFileName, { type: 'application/pdf' }) },
-    });
   }
 
   return (
@@ -101,7 +93,7 @@ export default function PdfMergerTool() {
         onDragOver={(event) => event.preventDefault()}
         onDrop={handleDrop}
       >
-        <input accept="application/pdf,.pdf" aria-label="Choose PDFs to merge" className="sr-only" multiple onChange={handleFileChange} ref={fileInputRef} type="file" />
+        <input accept="application/pdf,.pdf" aria-label="Choose PDFs to merge" className="sr-only" disabled={isMerging} multiple onChange={handleFileChange} ref={fileInputRef} type="file" />
         <Plus className="mb-3 size-7 text-accent-dark" aria-hidden="true" />
         <strong className="text-sm">Drop PDF files here or choose files</strong>
         <span className="mt-1 text-xs text-muted">You can add more files at any time.</span>
@@ -130,17 +122,20 @@ export default function PdfMergerTool() {
               <div className="flex items-center gap-1">
                 <button aria-label={`Move ${file.name} earlier`} className="button button-secondary min-h-8 px-2 py-1" disabled={isMerging || index === 0} onClick={() => moveFile(index, index - 1)} type="button"><ArrowUp size={15} /></button>
                 <button aria-label={`Move ${file.name} later`} className="button button-secondary min-h-8 px-2 py-1" disabled={isMerging || index === files.length - 1} onClick={() => moveFile(index, index + 1)} type="button"><ArrowDown size={15} /></button>
-                <button aria-label={`Remove ${file.name}`} className="button button-secondary min-h-8 px-2 py-1 text-[#a53b32]" disabled={isMerging} onClick={() => { setFiles((current) => current.filter((item) => item.id !== id)); setResult(null); }} type="button"><Trash2 size={15} /></button>
+                <button aria-label={`Remove ${file.name}`} className="button button-secondary min-h-8 px-2 py-1 text-[#a53b32]" disabled={isMerging} onClick={() => { setFiles((current) => current.filter((item) => item.id !== id)); }} type="button"><Trash2 size={15} /></button>
               </div>
             </li>
           ))}
         </ol>
       )}
 
-      <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-line pt-5">
-        <button className="button button-primary" disabled={files.length < 2 || isMerging} onClick={mergeFiles} type="button"><Combine size={17} aria-hidden="true" />{isMerging ? 'Merging PDFs...' : 'Merge PDFs'}</button>
-        {result && downloadUrl && <a className="button button-secondary" download={resultFileName} href={downloadUrl}><Download size={17} aria-hidden="true" />Download</a>}
-        {result && <button className="button button-secondary" onClick={editResult} type="button"><Pencil size={17} aria-hidden="true" />Edit pages</button>}
+      <div className="mt-6 flex flex-wrap items-end gap-3 border-t border-line pt-5">
+        <div className="min-w-0 flex-1 basis-60">
+          <label className="mb-2 block text-xs font-semibold" htmlFor="merge-result-name">Result PDF name</label>
+          <input className="input-control w-full" disabled={isMerging} id="merge-result-name" onChange={(event) => setResultName(event.target.value)} value={resultName ?? defaultFileName} />
+        </div>
+        <button className="button button-primary" disabled={files.length < 2 || isMerging} onClick={() => void mergeFiles('download')} type="button"><Download size={17} aria-hidden="true" />{isMerging ? 'Preparing PDF...' : 'Download'}</button>
+        <button className="button button-secondary" disabled={files.length < 2 || isMerging} onClick={() => void mergeFiles('edit')} type="button"><Pencil size={17} aria-hidden="true" />Edit pages</button>
       </div>
     </section>
   );

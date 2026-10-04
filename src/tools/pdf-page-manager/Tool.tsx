@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { ArrowLeft, ArrowRight, Copy, Download, FileText, RotateCcw, Trash2, Upload } from 'lucide-react';
 import * as pdfjs from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { formatFileSize, isPdfFile, moveItem, outputFileName, rebuildPdf } from '../pdf/pdfDocument';
+import { downloadPdf, formatFileSize, isPdfFile, moveItem, outputFileName, pdfDownloadName, rebuildPdf } from '../pdf/pdfDocument';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -18,21 +18,14 @@ export default function PdfPageManagerTool() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isBuilding, setIsBuilding] = useState(false);
-  const [result, setResult] = useState<Blob | null>(null);
+  const [resultName, setResultName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const receivedTransferRef = useRef(false);
   const location = useLocation();
   const navigate = useNavigate();
   const transferredFile = (location.state as TransferState | null)?.file;
-  const resultFileName = outputFileName(file?.name ?? 'document', 'pages');
-  const downloadUrl = useMemo(() => result ? URL.createObjectURL(result) : null, [result]);
-
-  useEffect(() => () => {
-    if (downloadUrl) {
-      URL.revokeObjectURL(downloadUrl);
-    }
-  }, [downloadUrl]);
+  const resultFileName = pdfDownloadName(resultName, outputFileName(file?.name ?? 'document', 'pages'));
 
   useEffect(() => {
     if (!transferredFile || receivedTransferRef.current) {
@@ -40,6 +33,7 @@ export default function PdfPageManagerTool() {
     }
     receivedTransferRef.current = true;
     setFile(transferredFile);
+    setResultName(transferredFile.name);
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, navigate, transferredFile]);
 
@@ -53,7 +47,6 @@ export default function PdfPageManagerTool() {
     setIsLoading(true);
     setThumbnails([]);
     setPageOrder([]);
-    setResult(null);
     setError(null);
 
     async function renderPages() {
@@ -104,6 +97,7 @@ export default function PdfPageManagerTool() {
       return;
     }
     setFile(nextFile);
+    setResultName(outputFileName(nextFile.name, 'pages'));
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -117,8 +111,8 @@ export default function PdfPageManagerTool() {
   }
 
   function updateOrder(nextOrder: number[]) {
+    if (isBuilding) return;
     setPageOrder(nextOrder);
-    setResult(null);
   }
 
   function duplicatePage(index: number) {
@@ -134,14 +128,13 @@ export default function PdfPageManagerTool() {
   }
 
   async function buildPdf() {
-    if (!file || !pageOrder.length) {
+    if (!file || !pageOrder.length || isBuilding || isLoading) {
       return;
     }
     setIsBuilding(true);
     setError(null);
-    setResult(null);
     try {
-      setResult(await rebuildPdf(file, pageOrder));
+      downloadPdf(await rebuildPdf(file, pageOrder), resultFileName);
     } catch {
       setError('The edited PDF could not be created. Please try a different file.');
     } finally {
@@ -211,9 +204,12 @@ export default function PdfPageManagerTool() {
               </ol>
             </>
           )}
-          <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-line pt-5">
-            <button className="button button-primary" disabled={isLoading || isBuilding || !pageOrder.length} onClick={buildPdf} type="button">{isBuilding ? 'Creating PDF...' : 'Create PDF'}</button>
-            {result && downloadUrl && <a className="button button-secondary" download={resultFileName} href={downloadUrl}><Download size={17} aria-hidden="true" />Download</a>}
+          <div className="mt-6 flex flex-wrap items-end gap-3 border-t border-line pt-5">
+            <div className="min-w-0 flex-1 basis-60">
+              <label className="mb-2 block text-xs font-semibold" htmlFor="pages-result-name">Result PDF name</label>
+              <input className="input-control w-full" disabled={isBuilding} id="pages-result-name" onChange={(event) => setResultName(event.target.value)} value={resultName} />
+            </div>
+            <button className="button button-primary" disabled={isLoading || isBuilding || !pageOrder.length} onClick={buildPdf} type="button"><Download size={17} aria-hidden="true" />{isBuilding ? 'Preparing PDF...' : 'Download'}</button>
           </div>
         </>
       )}
