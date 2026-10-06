@@ -11,6 +11,10 @@ interface Row {
 }
 
 interface PositionMap {
+  oldCellStart: number;
+  oldCellEnd: number;
+  newCellStart: number;
+  newCellEnd: number;
   oldStart: number;
   oldEnd: number;
   newStart: number;
@@ -76,15 +80,27 @@ function formatRow(row: Row, widths: number[], alignments: Alignment[], separato
     const left = separator ? 0 : align === 'right' ? extra : align === 'center' ? Math.floor(extra / 2) : 0;
     const right = separator ? 0 : extra - left;
     const newStart = output.length + 1 + left;
+    const newCellStart = output.length;
     output += ` ${' '.repeat(left)}${content}${' '.repeat(right)} |`;
-    positions.push({ oldStart: cell.contentStart, oldEnd: cell.contentStart + cell.value.length, newStart, newEnd: newStart + content.length });
+    positions.push({
+      oldCellStart: cell.start, oldCellEnd: cell.end,
+      newCellStart, newCellEnd: output.length - 1,
+      oldStart: cell.contentStart, oldEnd: cell.contentStart + cell.value.length,
+      newStart, newEnd: newStart + content.length,
+    });
   });
 
   return { text: output, mapColumn(column: number) {
     if (column === 0) return 0;
     for (const position of positions) {
-      if (column < position.oldStart) return position.newStart;
-      if (column <= position.oldEnd) return position.newStart + column - position.oldStart;
+      if (column < position.oldCellStart) return position.newCellStart;
+      if (column > position.oldCellEnd) continue;
+      if (column === position.oldCellEnd) return position.newCellEnd;
+      if (column < position.oldStart) {
+        return Math.max(position.newCellStart, position.newStart - (position.oldStart - column));
+      }
+      if (column <= position.oldEnd) return Math.min(position.newEnd, position.newStart + column - position.oldStart);
+      return Math.min(position.newCellEnd, position.newEnd + column - position.oldEnd);
     }
     return output.length;
   } };

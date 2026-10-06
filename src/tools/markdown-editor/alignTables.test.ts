@@ -45,4 +45,32 @@ describe('alignMarkdownTables', () => {
     const input = '| Name | Example |\n| --- | --- |\n| a | `one | two` |';
     expect(alignMarkdownTables(input).text).toBe('| Name | Example     |\n| ---- | ----------- |\n| a    | `one | two` |');
   });
+
+  it('keeps padding and delimiter positions within the original cell', () => {
+    const input = '| Name | Value |\n| --- | --- |\n| a    | longer |';
+    const result = alignMarkdownTables(input);
+    const start = input.indexOf('a    |');
+    const newStart = result.text.indexOf('a    |');
+    for (let offset = 0; offset <= 5; offset++) {
+      expect(result.mapOffset(start + offset)).toBe(newStart + offset);
+    }
+    const leading = input.indexOf('| a') + 1;
+    expect(result.mapOffset(leading)).toBe(result.text.indexOf('| a') + 1);
+  });
+
+  it('maps an empty cell and shrinking padding without moving into another cell', () => {
+    const input = '| A | B |\n| --- | --- |\n|      | long value |';
+    const result = alignMarkdownTables(input);
+    const emptyStart = input.lastIndexOf('\n') + 2;
+    const newEmptyStart = result.text.lastIndexOf('\n') + 2;
+    const closingPipe = result.text.indexOf('|', newEmptyStart);
+    for (let offset = 0; offset < 6; offset++) {
+      expect(result.mapOffset(emptyStart + offset)).toBeGreaterThanOrEqual(newEmptyStart);
+      expect(result.mapOffset(emptyStart + offset)).toBeLessThanOrEqual(closingPipe);
+    }
+
+    const padded = '| A | B |\n| --- | --- |\n| x          | y |';
+    const aligned = alignMarkdownTables(padded);
+    expect(aligned.mapOffset(padded.indexOf('x') + 7)).toBe(aligned.text.indexOf('|', aligned.text.indexOf('x')));
+  });
 });

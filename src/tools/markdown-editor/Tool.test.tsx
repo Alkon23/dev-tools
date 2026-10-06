@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import MarkdownEditorTool from './Tool';
@@ -74,7 +74,7 @@ describe('MarkdownEditorTool', () => {
     expect((editor as HTMLTextAreaElement).value).toContain('Hello, Markdown!');
   });
 
-  it('aligns table columns after typing without losing the cursor and offers a collapsed cheatsheet', async () => {
+  it('aligns tables only on blur, restores selection, and offers a collapsed cheatsheet', async () => {
     const user = userEvent.setup();
     render(<MarkdownEditorTool />);
     const editor = screen.getByRole('textbox', { name: 'Markdown source' }) as HTMLTextAreaElement;
@@ -82,10 +82,27 @@ describe('MarkdownEditorTool', () => {
     const caret = input.indexOf('longer') + 3;
     editor.focus();
     fireEvent.change(editor, { target: { value: input } });
-    editor.setSelectionRange(caret, caret);
+    editor.setSelectionRange(caret, caret + 3, 'backward');
+    editor.scrollTop = 40;
+    editor.scrollLeft = 20;
 
-    await waitFor(() => expect(editor.value).toContain('| Name   | Value |\n| ------ | ----: |\n| a      |    12 |'), { timeout: 2000 });
+    vi.useFakeTimers();
+    try {
+      act(() => { vi.advanceTimersByTime(10_000); });
+      expect(editor.value).toBe(input);
+      expect(editor.selectionStart).toBe(caret);
+    } finally {
+      vi.useRealTimers();
+    }
+    const filename = screen.getByRole('textbox', { name: 'File name' });
+    await user.click(filename);
+    expect(editor.value).toContain('| Name   | Value |\n| ------ | ----: |\n| a      |    12 |');
     expect(editor.value.slice(editor.selectionStart - 3, editor.selectionStart + 3)).toBe('longer');
+    expect(editor.value.slice(editor.selectionStart, editor.selectionEnd)).toBe('ger');
+    expect(editor.selectionDirection).toBe('backward');
+    expect(editor.scrollTop).toBe(40);
+    expect(editor.scrollLeft).toBe(20);
+    expect(filename).toHaveFocus();
     expect(screen.getByRole('region', { name: 'Markdown preview' }).querySelector('table')).toBeInTheDocument();
 
     const details = screen.getByText('Markdown cheatsheet').closest('details')!;
@@ -94,5 +111,23 @@ describe('MarkdownEditorTool', () => {
     expect(details).toHaveAttribute('open');
     expect(details).toHaveTextContent('**bold**');
     expect(details).toHaveTextContent('| --- | ---: |');
+  });
+
+  it('keeps a cursor in trailing cell padding in that cell when editing resumes', async () => {
+    const user = userEvent.setup();
+    render(<MarkdownEditorTool />);
+    const editor = screen.getByRole('textbox', { name: 'Markdown source' }) as HTMLTextAreaElement;
+    const input = '| Name | Value |\n| --- | --- |\n| a    | longer |';
+    editor.focus();
+    fireEvent.change(editor, { target: { value: input } });
+    editor.setSelectionRange(input.indexOf('a    |') + 2, input.indexOf('a    |') + 2);
+
+    await user.click(screen.getByRole('textbox', { name: 'File name' }));
+    const caret = editor.selectionStart;
+    expect(editor.value.slice(caret - 2, caret)).toBe('a ');
+    expect(editor.value.indexOf('longer')).toBeGreaterThan(caret);
+    editor.focus();
+    await user.keyboard('next');
+    expect(editor.value).toContain('| a next');
   });
 });

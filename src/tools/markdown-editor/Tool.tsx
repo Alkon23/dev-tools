@@ -7,7 +7,6 @@ import './markdown.css';
 
 const EXAMPLE = '# Hello, Markdown!\n\nWrite **bold text**, add a [link](https://example.com), or make a list:\n\n- [x] Write Markdown\n- [ ] Preview the result\n';
 const MARKDOWN_PLUGINS = [remarkGfm];
-const TABLE_FORMAT_DELAY = 450;
 
 function downloadName(name: string): string {
   const base = name.trim().replace(/\.(md|markdown)$/i, '').replace(/[\\/:*?"<>|\p{Cc}]/gu, '-').replace(/[. ]+$/g, '');
@@ -22,34 +21,36 @@ export default function MarkdownEditorTool() {
   const importSequence = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const editor = useRef<HTMLTextAreaElement>(null);
-  const pendingSelection = useRef<{ text: string; start: number; end: number; scrollTop: number } | null>(null);
+  const pendingSelection = useRef<{ text: string; start: number; end: number; direction: 'forward' | 'backward' | 'none'; scrollTop: number; scrollLeft: number } | null>(null);
   const copyTimer = useRef<number | null>(null);
   const downloadUrl = useMemo(() => URL.createObjectURL(new Blob([source], { type: 'text/markdown;charset=utf-8' })), [source]);
 
   useEffect(() => () => URL.revokeObjectURL(downloadUrl), [downloadUrl]);
-  useEffect(() => {
-    const result = alignMarkdownTables(source);
-    if (result.text === source) return;
-    const timer = window.setTimeout(() => {
-      const field = editor.current;
-      if (field && document.activeElement === field) {
-        pendingSelection.current = {
-          text: result.text,
-          start: result.mapOffset(field.selectionStart),
-          end: result.mapOffset(field.selectionEnd),
-          scrollTop: field.scrollTop,
-        };
-      }
-      setSource((current) => current === source ? result.text : current);
-    }, TABLE_FORMAT_DELAY);
-    return () => window.clearTimeout(timer);
-  }, [source]);
+
+  function formatTablesOnBlur() {
+    const field = editor.current;
+    if (!field) return;
+    const result = alignMarkdownTables(field.value);
+    if (result.text === field.value) return;
+    pendingSelection.current = {
+      text: result.text,
+      start: result.mapOffset(field.selectionStart),
+      end: result.mapOffset(field.selectionEnd),
+      direction: field.selectionDirection,
+      scrollTop: field.scrollTop,
+      scrollLeft: field.scrollLeft,
+    };
+    setSource(result.text);
+  }
 
   useLayoutEffect(() => {
     const selection = pendingSelection.current;
     if (selection?.text === source) {
-      editor.current?.setSelectionRange(selection.start, selection.end);
-      if (editor.current) editor.current.scrollTop = selection.scrollTop;
+      editor.current?.setSelectionRange(selection.start, selection.end, selection.direction);
+      if (editor.current) {
+        editor.current.scrollTop = selection.scrollTop;
+        editor.current.scrollLeft = selection.scrollLeft;
+      }
       pendingSelection.current = null;
     }
   }, [source]);
@@ -122,6 +123,7 @@ export default function MarkdownEditorTool() {
             autoCapitalize="off"
             className="min-h-[max(480px,calc(100dvh-360px))] flex-1 font-mono text-[13px] leading-[1.65] max-[760px]:min-h-[340px]"
             id="markdown-source"
+            onBlur={formatTablesOnBlur}
             onChange={(event) => { ++importSequence.current; setSource(event.target.value); setError(null); }}
             placeholder="Write Markdown here..."
             ref={editor}
