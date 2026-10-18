@@ -152,6 +152,15 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'Percentage calculator' })).toBeInTheDocument();
   });
 
+  it('loads the rule of three directly and marks its sidebar link active', async () => {
+    render(<MemoryRouter initialEntries={['/tools/rule-of-three']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Rule of three' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'Rule of three' })).toBeInTheDocument();
+    expect(within(screen.getByRole('navigation', { name: 'Developer tools' })).getByRole('link', { name: 'Rule of three' })).toHaveAttribute('aria-current', 'page');
+    expect(toolsByCategory.get('Math')?.some((tool) => tool.id === 'rule-of-three')).toBe(true);
+  });
+
   it('loads text statistics directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/text-statistics']}><App /></MemoryRouter>);
 
