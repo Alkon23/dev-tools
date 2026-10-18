@@ -99,6 +99,16 @@ describe('App', () => {
     expect(await screen.findByRole('region', { name: 'QR code generator' })).toBeInTheDocument();
   });
 
+  it('loads the QR reader directly and marks its sidebar link active', async () => {
+    render(<MemoryRouter initialEntries={['/tools/qr-reader']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'QR code reader' })).toBeInTheDocument();
+    expect(await screen.findByRole('region', { name: 'QR code reader' })).toBeInTheDocument();
+    const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
+    expect(within(navigation).getByRole('link', { name: 'QR code reader' })).toHaveAttribute('aria-current', 'page');
+    expect(within(navigation).getByText('Converters')).toBeInTheDocument();
+  });
+
   it('loads the crontab generator directly from its generated route', async () => {
     render(<MemoryRouter initialEntries={['/tools/crontab-generator']}><App /></MemoryRouter>);
 
