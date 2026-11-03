@@ -64,7 +64,7 @@ export default function PdfMergerTool() {
       if (action === 'download') {
         downloadPdf(result, resultFileName);
       } else {
-        navigate('/tools/pdf-page-manager', {
+        navigate('/pdf-page-manager', {
           state: { file: new File([result], resultFileName, { type: 'application/pdf' }) },
         });
       }

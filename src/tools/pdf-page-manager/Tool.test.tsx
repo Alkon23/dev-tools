@@ -53,7 +53,7 @@ describe('PdfPageManagerTool', () => {
   });
 
   it('preserves the transferred merger filename', async () => {
-    render(<MemoryRouter initialEntries={[{ pathname: '/tools/pdf-page-manager', state: { file: sourceFile('Combined.pdf') } }]}><PdfPageManagerTool /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={[{ pathname: '/pdf-page-manager', state: { file: sourceFile('Combined.pdf') } }]}><PdfPageManagerTool /></MemoryRouter>);
     await screen.findByRole('button', { name: 'Duplicate original page 1' });
     expect(screen.getByLabelText('Result PDF name')).toHaveValue('Combined.pdf');
   });

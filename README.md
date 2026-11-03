@@ -52,7 +52,9 @@ export default function MyTool() {
 }
 ```
 
-Vite discovers both files at build time. The manifest is loaded eagerly because the shell needs its small metadata, while `Tool.tsx` is emitted as a lazy-loaded chunk and fetched only when its route is visited. Tool IDs must be unique kebab-case values. The resulting route is `/tools/<id>`.
+Vite discovers both files at build time. The manifest is loaded eagerly because the shell needs its small metadata, while `Tool.tsx` is emitted as a lazy-loaded chunk and fetched only when its route is visited. Tool IDs must be unique kebab-case values. The resulting route is `/<id>`, mounted under Vite's base path: `/dev-tools/<id>` on GitHub Pages. The dashboard is at `/dev-tools/`.
+
+Production builds also emit `404.html` so GitHub Pages can load direct tool URLs and refresh them without changing the address, query string, or fragment. GitHub Pages still returns HTTP 404 for these initial deep-link requests; the fallback renders the application normally.
 
 Business logic and tests should remain colocated in the same tool directory. Shared primitives belong outside individual tool directories only when at least two tools use them.
 

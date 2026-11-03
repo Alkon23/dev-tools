@@ -25,7 +25,7 @@ describe('buildToolRegistry', () => {
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({ id: 'sample-tool', path: '/tools/sample-tool' });
+    expect(result[0]).toMatchObject({ id: 'sample-tool', path: '/sample-tool' });
   });
 
   it('rejects a manifest without a colocated component', () => {

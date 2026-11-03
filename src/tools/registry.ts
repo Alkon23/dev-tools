@@ -38,7 +38,7 @@ export function buildToolRegistry(
 
       return {
         ...manifest,
-        path: `/tools/${manifest.id}`,
+        path: `/${manifest.id}`,
         Component: lazy(loadComponent),
       };
     })

@@ -45,7 +45,7 @@ export default function MyTool() {
 }
 ```
 
-The registry generates `/tools/<id>` routes and grouped navigation from these files. Do not edit `src/App.tsx`, `src/components/Sidebar.tsx`, or `src/tools/registry.ts` just to register a tool.
+The registry generates `/<id>` routes and grouped navigation from these files. The router mounts these under Vite's base path (`/dev-tools/<id>` on GitHub Pages). Do not edit `src/App.tsx`, `src/components/Sidebar.tsx`, or `src/tools/registry.ts` just to register a tool.
 
 ## Tool Conventions
 
@@ -88,7 +88,7 @@ pnpm build
 For new or changed tools, also verify:
 
 - The tool appears under the expected sidebar category.
-- `/tools/<id>` loads directly without visiting the dashboard first.
+- `/dev-tools/<id>` loads directly without visiting the dashboard first.
 - The active navigation state is correct.
 - Core behavior has focused tests, including empty and malformed input where relevant.
 - The tool remains usable on desktop and mobile.

@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 import { toolsByCategory } from './tools/registry';
@@ -73,6 +73,54 @@ describe('App', () => {
     expect(screen.getByRole('link', { name: 'GitHub repository' })).toHaveAttribute('href', 'https://github.com/Alkon23/dev-tools');
   });
 
+  it('keeps dashboard and sidebar links under the deployment base', async () => {
+    render(<MemoryRouter basename="/dev-tools/" initialEntries={['/dev-tools/']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'Tools' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/dev-tools/');
+    const allLinks = screen.getAllByRole('link');
+    for (const categoryTools of toolsByCategory.values()) {
+      for (const tool of categoryTools) {
+        const links = allLinks.filter((link) => link.getAttribute('href') === `/dev-tools/${tool.id}`);
+        expect(links).toHaveLength(2);
+      }
+    }
+
+    const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
+    fireEvent.click(within(navigation).getByRole('link', { name: 'QR code reader' }));
+    expect(await screen.findByRole('region', { name: 'QR code reader' }, { timeout: 5000 })).toBeInTheDocument();
+    expect(within(navigation).getByRole('link', { name: 'QR code reader' })).toHaveAttribute('aria-current', 'page');
+    fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+    expect(screen.getByRole('heading', { name: 'Tools' })).toBeInTheDocument();
+  });
+
+  it('opens a clean browser URL with its query and fragment intact', async () => {
+    const originalUrl = window.location.href;
+    window.history.replaceState(null, '', '/dev-tools/qr-reader?example=a%26b#preview');
+    const page = render(<BrowserRouter basename={import.meta.env.BASE_URL}><App /></BrowserRouter>);
+
+    try {
+      expect(await screen.findByRole('region', { name: 'QR code reader' })).toBeInTheDocument();
+      expect(window.location.pathname).toBe('/dev-tools/qr-reader');
+      expect(window.location.search).toBe('?example=a%26b');
+      expect(window.location.hash).toBe('#preview');
+      const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
+      expect(within(navigation).getByRole('link', { name: 'QR code reader' })).toHaveAttribute('aria-current', 'page');
+      fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+      expect(window.location.pathname).toBe('/dev-tools/');
+    } finally {
+      page.unmount();
+      window.history.replaceState(null, '', originalUrl);
+    }
+  });
+
+  it('renders the app not-found page for unknown slugs under the deployment base', () => {
+    render(<MemoryRouter basename="/dev-tools/" initialEntries={['/dev-tools/unknown']}><App /></MemoryRouter>);
+
+    expect(screen.getByRole('heading', { name: 'This utility does not exist.' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/dev-tools/');
+  });
+
   it('shows category labels in the mobile drawer after collapsing the sidebar', () => {
     render(<MemoryRouter><App /></MemoryRouter>);
 
@@ -86,21 +134,21 @@ describe('App', () => {
   });
 
   it('renders a lazy tool inside the tool container', async () => {
-    render(<MemoryRouter initialEntries={['/tools/text-case']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/text-case']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Text case converter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Text case converter' })).toBeInTheDocument();
   });
 
   it('loads the QR generator directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/qr-generator']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/qr-generator']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'QR code generator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'QR code generator' })).toBeInTheDocument();
   });
 
   it('loads the QR reader directly and marks its sidebar link active', async () => {
-    render(<MemoryRouter initialEntries={['/tools/qr-reader']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/qr-reader']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'QR code reader' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'QR code reader' })).toBeInTheDocument();
@@ -110,14 +158,14 @@ describe('App', () => {
   });
 
   it('loads the crontab generator directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/crontab-generator']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/crontab-generator']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Crontab generator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Crontab generator' })).toBeInTheDocument();
   });
 
   it('loads the ASCII tree generator directly and marks its sidebar link active', async () => {
-    render(<MemoryRouter initialEntries={['/tools/ascii-tree']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/ascii-tree']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'ASCII tree generator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'ASCII tree generator' })).toBeInTheDocument();
@@ -127,7 +175,7 @@ describe('App', () => {
   it('loads the Markdown editor directly under Text and marks its sidebar link active', async () => {
     URL.createObjectURL = vi.fn(() => 'blob:markdown-draft');
     URL.revokeObjectURL = vi.fn();
-    render(<MemoryRouter initialEntries={['/tools/markdown-editor']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/markdown-editor']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Markdown editor' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Markdown editor' }, { timeout: 5000 })).toBeInTheDocument();
@@ -135,35 +183,35 @@ describe('App', () => {
   });
 
   it('loads the regex tester directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/regex-tester']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/regex-tester']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Regex tester' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Regex tester' })).toBeInTheDocument();
   });
 
   it('loads the keyboard tester directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/keyboard-tester']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/keyboard-tester']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Keyboard tester' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Keyboard tester' })).toBeInTheDocument();
   });
 
   it('loads the ISSN / ISBN validator directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/issn-isbn-validator']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/issn-isbn-validator']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'ISSN / ISBN validator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'ISSN and ISBN validator' })).toBeInTheDocument();
   });
 
   it('loads the percentage calculator directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/percentage-calculator']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/percentage-calculator']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Percentage calculator' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Percentage calculator' })).toBeInTheDocument();
   });
 
   it('loads the rule of three directly and marks its sidebar link active', async () => {
-    render(<MemoryRouter initialEntries={['/tools/rule-of-three']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/rule-of-three']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Rule of three' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Rule of three' })).toBeInTheDocument();
@@ -172,70 +220,70 @@ describe('App', () => {
   });
 
   it('loads text statistics directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/text-statistics']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/text-statistics']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Text statistics' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Text statistics' })).toBeInTheDocument();
   });
 
   it('loads Text to Unicode directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/text-to-unicode']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/text-to-unicode']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Text to Unicode' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Text to Unicode' })).toBeInTheDocument();
   });
 
   it('loads the date-time converter directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/date-time-converter']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/date-time-converter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Date-time converter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Date-time converter' }, { timeout: 8000 })).toBeInTheDocument();
   });
 
   it('loads the color converter directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/color-converter']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/color-converter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Color converter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Color converter' })).toBeInTheDocument();
   });
 
   it('loads the unit converter directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/unit-converter']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/unit-converter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'Unit converter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'Unit converter' })).toBeInTheDocument();
   });
 
   it('loads the JSON formatter directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/json-formatter']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/json-formatter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'JSON formatter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'JSON formatter' })).toBeInTheDocument();
   });
 
   it('loads the XML formatter directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/xml-formatter']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/xml-formatter']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'XML formatter' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'XML formatter' })).toBeInTheDocument();
   });
 
   it('loads the URL encoder directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/url-encoder']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/url-encoder']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'URL encoder / decoder' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'URL encoder / decoder' })).toBeInTheDocument();
   });
 
   it('loads the URL parser directly from its generated route', async () => {
-    render(<MemoryRouter initialEntries={['/tools/url-parser']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/url-parser']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'URL parser' })).toBeInTheDocument();
     expect(await screen.findByRole('region', { name: 'URL parser' })).toBeInTheDocument();
   });
 
   it('renders the not-found page for unknown paths', () => {
-    render(<MemoryRouter initialEntries={['/tools/unknown']}><App /></MemoryRouter>);
+    render(<MemoryRouter initialEntries={['/unknown']}><App /></MemoryRouter>);
 
     expect(screen.getByRole('heading', { name: 'This utility does not exist.' })).toBeInTheDocument();
   });

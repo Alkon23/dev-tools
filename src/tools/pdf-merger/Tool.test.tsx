@@ -56,9 +56,9 @@ describe('PdfMergerTool', () => {
   });
 
   it('merges and hands off the named result directly to the editor', async () => {
-    render(<MemoryRouter initialEntries={['/tools/pdf-merger']}><Routes>
-      <Route path="/tools/pdf-merger" element={<PdfMergerTool />} />
-      <Route path="/tools/pdf-page-manager" element={<TransferResult />} />
+    render(<MemoryRouter basename="/dev-tools/" initialEntries={['/dev-tools/pdf-merger']}><Routes>
+      <Route path="/pdf-merger" element={<PdfMergerTool />} />
+      <Route path="/pdf-page-manager" element={<TransferResult />} />
     </Routes></MemoryRouter>);
     addFiles();
     fireEvent.change(screen.getByLabelText('Result PDF name'), { target: { value: 'Combined' } });
