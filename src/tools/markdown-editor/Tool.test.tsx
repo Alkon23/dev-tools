@@ -10,6 +10,30 @@ beforeEach(() => {
 });
 
 describe('MarkdownEditorTool', () => {
+  it('switches between split, editor-only, and viewer-only modes', async () => {
+    const user = userEvent.setup();
+    render(<MarkdownEditorTool />);
+    const editorButton = screen.getByRole('button', { name: 'Editor only' });
+    const viewerButton = screen.getByRole('button', { name: 'Viewer only' });
+    const splitButton = screen.getByRole('button', { name: 'Live preview' });
+
+    expect(screen.getByRole('textbox', { name: 'Markdown source' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Markdown preview' })).toBeInTheDocument();
+    await user.click(editorButton);
+    expect(screen.getByRole('textbox', { name: 'Markdown source' })).toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Markdown preview' })).not.toBeInTheDocument();
+    expect(editorButton).toHaveAttribute('aria-pressed', 'true');
+
+    await user.click(viewerButton);
+    expect(screen.queryByRole('textbox', { name: 'Markdown source' })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Markdown preview' })).toBeInTheDocument();
+
+    await user.click(splitButton);
+    expect(screen.getByRole('textbox', { name: 'Markdown source' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Markdown preview' })).toBeInTheDocument();
+    expect(splitButton).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('updates the live GFM preview and ignores unsafe HTML and links', async () => {
     const user = userEvent.setup();
     render(<MarkdownEditorTool />);

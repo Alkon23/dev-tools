@@ -15,6 +15,7 @@ function downloadName(name: string): string {
 
 export default function MarkdownEditorTool() {
   const [source, setSource] = useState(EXAMPLE);
+  const [viewMode, setViewMode] = useState<'split' | 'editor' | 'viewer'>('split');
   const [fileName, setFileName] = useState('untitled');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -109,8 +110,14 @@ export default function MarkdownEditorTool() {
       </div>
       {error && <p className="mb-4 rounded-[7px] border border-[#edc6c1] bg-[#fff1ef] px-3 py-2.5 text-xs text-[#9a382f]" role="alert">{error}</p>}
 
-      <div className="grid grid-cols-2 items-stretch gap-[18px] max-[760px]:grid-cols-1">
-        <div className="tool-card flex min-w-0 flex-col p-[clamp(18px,2.5vw,30px)]">
+      <div aria-label="Markdown view" className="mb-4 flex flex-wrap gap-2" role="group">
+        <button aria-pressed={viewMode === 'split'} className={`button ${viewMode === 'split' ? 'button-primary' : 'button-secondary'}`} onClick={() => setViewMode('split')} type="button">Live preview</button>
+        <button aria-pressed={viewMode === 'editor'} className={`button ${viewMode === 'editor' ? 'button-primary' : 'button-secondary'}`} onClick={() => setViewMode('editor')} type="button">Editor only</button>
+        <button aria-pressed={viewMode === 'viewer'} className={`button ${viewMode === 'viewer' ? 'button-primary' : 'button-secondary'}`} onClick={() => setViewMode('viewer')} type="button">Viewer only</button>
+      </div>
+
+      <div className={`grid items-stretch gap-[18px] ${viewMode === 'split' ? 'grid-cols-2 max-[760px]:grid-cols-1' : 'grid-cols-1'}`}>
+        {viewMode !== 'viewer' && <div className="tool-card flex min-w-0 flex-col p-[clamp(18px,2.5vw,30px)]">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div><span className="section-index">SOURCE</span><h2 className="mt-1 mb-0 text-[18px] font-semibold">Markdown</h2></div>
             <div className="flex gap-2">
@@ -130,14 +137,14 @@ export default function MarkdownEditorTool() {
             spellCheck={false}
             value={source}
           />
-        </div>
+        </div>}
 
-        <div className="tool-card flex min-w-0 flex-col p-[clamp(18px,2.5vw,30px)]">
+        {viewMode !== 'editor' && <div className="tool-card flex min-w-0 flex-col p-[clamp(18px,2.5vw,30px)]">
           <div className="mb-4"><span className="section-index">LIVE PREVIEW</span><h2 className="mt-1 mb-0 text-[18px] font-semibold">Rendered Markdown</h2></div>
           <div aria-label="Markdown preview" className="markdown-preview min-h-[max(480px,calc(100dvh-360px))] min-w-0 flex-1 overflow-x-auto rounded-[7px] border border-[#d8dfdc] bg-[#f8faf9] px-5 py-4 max-[760px]:min-h-[340px]" role="region">
             {source ? <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{source}</Markdown> : <p className="text-muted">Your preview will appear here.</p>}
           </div>
-        </div>
+        </div>}
       </div>
       <details className="tool-card mt-[18px] px-5 py-4">
         <summary className="cursor-pointer text-sm font-semibold marker:text-accent-dark">Markdown cheatsheet</summary>
