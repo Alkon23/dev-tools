@@ -3,8 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import TextDiffTool from './Tool';
 
 const monacoMock = vi.hoisted(() => {
+  const wrappingObserver = { dispose: vi.fn() };
+  const originalEditor = {
+    onDidLayoutChange: vi.fn<(listener: (layout: { contentWidth: number }) => void) => typeof wrappingObserver>(() => wrappingObserver),
+    updateOptions: vi.fn(),
+  };
   const editor = {
     dispose: vi.fn(),
+    getOriginalEditor: vi.fn(() => originalEditor),
     setModel: vi.fn(),
   };
   const models: Array<{ dispose: ReturnType<typeof vi.fn>; value: string }> = [];
@@ -17,6 +23,8 @@ const monacoMock = vi.hoisted(() => {
       return model;
     }),
     editor,
+    originalEditor,
+    wrappingObserver,
     setTheme: vi.fn(),
     models,
   };
@@ -60,12 +68,41 @@ describe('TextDiffTool', () => {
     });
   });
 
+  it('wraps long lines in both panes without a horizontal scrollbar', () => {
+    render(<TextDiffTool />);
+
+    expect(monacoMock.createDiffEditor).toHaveBeenCalledWith(expect.any(HTMLDivElement), expect.objectContaining({
+      diffWordWrap: 'on',
+      scrollbar: { horizontal: 'hidden' },
+      wordWrap: 'on',
+    }));
+  });
+
+  it('uses a taller viewport-based editor without a desktop height cap', () => {
+    render(<TextDiffTool />);
+
+    const container = screen.getByRole('region', { name: 'Text diff' }).firstElementChild;
+    expect(container).toHaveClass('h-[max(640px,calc(100dvh-220px))]', 'max-[760px]:h-[max(520px,calc(100dvh-200px))]');
+  });
+
+  it('restores original-pane wrapping when returning from inline to side-by-side view', () => {
+    render(<TextDiffTool />);
+
+    const onLayoutChange = monacoMock.originalEditor.onDidLayoutChange.mock.calls[0][0];
+    onLayoutChange({ contentWidth: -10 });
+    expect(monacoMock.originalEditor.updateOptions).not.toHaveBeenCalled();
+
+    onLayoutChange({ contentWidth: 600 });
+    expect(monacoMock.originalEditor.updateOptions).toHaveBeenCalledWith({ wordWrapOverride2: 'on' });
+  });
+
   it('disposes the editor and its models on unmount', () => {
     const view = render(<TextDiffTool />);
 
     view.unmount();
 
     expect(monacoMock.editor.dispose).toHaveBeenCalledOnce();
+    expect(monacoMock.wrappingObserver.dispose).toHaveBeenCalledOnce();
     expect(monacoMock.models[0].dispose).toHaveBeenCalledOnce();
     expect(monacoMock.models[1].dispose).toHaveBeenCalledOnce();
   });

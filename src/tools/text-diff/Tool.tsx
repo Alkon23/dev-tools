@@ -23,17 +23,29 @@ export default function TextDiffTool() {
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     const editor = monaco.editor.createDiffEditor(editorContainerRef.current, {
       automaticLayout: true,
+      diffWordWrap: 'on',
       minimap: { enabled: false },
       modifiedAriaLabel: 'Modified text',
       originalAriaLabel: 'Original text',
       originalEditable: true,
       renderSideBySide: true,
+      scrollbar: { horizontal: 'hidden' },
       useInlineViewWhenSpaceIsLimited: true,
+      wordWrap: 'on',
     });
 
     editor.setModel({ original: originalModel, modified: modifiedModel });
 
+    const originalEditor = editor.getOriginalEditor();
+    // Monaco disables wrapping in the hidden inline editor but does not restore it on resize.
+    const wrappingObserver = originalEditor.onDidLayoutChange(({ contentWidth }) => {
+      if (contentWidth > 0) {
+        originalEditor.updateOptions({ wordWrapOverride2: 'on' });
+      }
+    });
+
     return () => {
+      wrappingObserver.dispose();
       themeObserver.disconnect();
       editor.dispose();
       originalModel.dispose();
@@ -43,7 +55,7 @@ export default function TextDiffTool() {
 
   return (
     <section className="tool-card overflow-hidden p-0" aria-label="Text diff">
-      <div className="h-[clamp(520px,calc(100vh-260px),800px)] min-w-0 w-full max-[760px]:h-[max(480px,calc(100vh-250px))]" ref={editorContainerRef} />
+      <div className="h-[max(640px,calc(100dvh-220px))] min-w-0 w-full max-[760px]:h-[max(520px,calc(100dvh-200px))]" ref={editorContainerRef} />
     </section>
   );
 }
