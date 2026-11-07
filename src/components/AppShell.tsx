@@ -1,10 +1,11 @@
 import { ChevronLeft, Github, Home, Menu, Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useMatch } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { getPreferredTheme, readSavedTheme, saveTheme, type Theme } from '../theme';
 
 export function AppShell() {
+  const isTextDiff = useMatch('/text-diff') !== null;
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(getPreferredTheme);
@@ -78,7 +79,7 @@ export function AppShell() {
           </button>
         </header>
 
-        <main className="mx-auto min-h-[calc(100vh-68px)] max-w-[1680px] px-[clamp(24px,3vw,48px)] pt-9 pb-14 max-[760px]:px-[18px] max-[760px]:pt-7 max-[760px]:pb-12">
+        <main className={`mx-auto min-h-[calc(100vh-68px)] pt-9 pb-14 max-[760px]:px-[18px] max-[760px]:pt-7 max-[760px]:pb-12 ${isTextDiff ? 'max-w-none px-6' : 'max-w-[1680px] px-[clamp(24px,3vw,48px)]'}`}>
           <Outlet />
         </main>
       </div>

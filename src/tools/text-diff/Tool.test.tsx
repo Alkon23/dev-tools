@@ -78,11 +78,11 @@ describe('TextDiffTool', () => {
     }));
   });
 
-  it('uses a taller viewport-based editor without a desktop height cap', () => {
+  it('keeps the original responsive editor height', () => {
     render(<TextDiffTool />);
 
     const container = screen.getByRole('region', { name: 'Text diff' }).firstElementChild;
-    expect(container).toHaveClass('h-[max(640px,calc(100dvh-220px))]', 'max-[760px]:h-[max(520px,calc(100dvh-200px))]');
+    expect(container).toHaveClass('h-[clamp(520px,calc(100vh-260px),800px)]', 'max-[760px]:h-[max(480px,calc(100vh-250px))]');
   });
 
   it('restores original-pane wrapping when returning from inline to side-by-side view', () => {

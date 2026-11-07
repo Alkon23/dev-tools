@@ -55,7 +55,7 @@ export default function TextDiffTool() {
 
   return (
     <section className="tool-card overflow-hidden p-0" aria-label="Text diff">
-      <div className="h-[max(640px,calc(100dvh-220px))] min-w-0 w-full max-[760px]:h-[max(520px,calc(100dvh-200px))]" ref={editorContainerRef} />
+      <div className="h-[clamp(520px,calc(100vh-260px),800px)] min-w-0 w-full max-[760px]:h-[max(480px,calc(100vh-250px))]" ref={editorContainerRef} />
     </section>
   );
 }

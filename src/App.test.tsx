@@ -8,6 +8,10 @@ vi.mock('./tools/regex-tester/Tool.tsx', () => ({
   default: () => <section aria-label="Regex tester" />,
 }));
 
+vi.mock('./tools/text-diff/Tool.tsx', () => ({
+  default: () => <section aria-label="Text diff" />,
+}));
+
 describe('App', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -155,6 +159,23 @@ describe('App', () => {
     const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
     expect(within(navigation).getByRole('link', { name: 'QR code reader' })).toHaveAttribute('aria-current', 'page');
     expect(within(navigation).getByText('Converters')).toBeInTheDocument();
+  });
+
+  it('gives text diff the full workspace width without widening other pages', async () => {
+    render(<MemoryRouter basename="/dev-tools/" initialEntries={['/dev-tools/text-diff']}><App /></MemoryRouter>);
+
+    expect(await screen.findByRole('region', { name: 'Text diff' })).toBeInTheDocument();
+    expect(screen.getByRole('main')).toHaveClass('max-w-none', 'px-6', 'max-[760px]:px-[18px]');
+    expect(screen.getByRole('main')).not.toHaveClass('max-w-[1680px]');
+    const navigation = screen.getByRole('navigation', { name: 'Developer tools' });
+    expect(within(navigation).getByRole('link', { name: 'Text diff' })).toHaveAttribute('aria-current', 'page');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Collapse sidebar' }));
+    expect(screen.getByRole('main')).toHaveClass('max-w-none', 'px-6');
+
+    fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+    expect(screen.getByRole('main')).toHaveClass('max-w-[1680px]', 'px-[clamp(24px,3vw,48px)]');
+    expect(screen.getByRole('main')).not.toHaveClass('max-w-none');
   });
 
   it('loads the crontab generator directly from its generated route', async () => {
